@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="3.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DistributedDocs.Client\DistributedDocs.Client.csproj" />
+    <ProjectReference Include="..\DistributedDocs.VersionHistory\DistributedDocs.VersionHistory.csproj" />
+  </ItemGroup>
+
+
+</Project>
