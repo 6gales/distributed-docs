@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributedDocs.Client", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributedDocs.VersionHistory", "DistributedDocs.VersionHistory\DistributedDocs.VersionHistory.csproj", "{021FAAFC-2E0A-400C-8F59-6F0DDA344DBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedDocs.FileSystem", "DistributedDocs.FileSystem\DistributedDocs.FileSystem.csproj", "{7FA83CD1-5116-43FC-AB4C-FF10DC2F28EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributedDocs.FileSystem", "DistributedDocs.FileSystem\DistributedDocs.FileSystem.csproj", "{7FA83CD1-5116-43FC-AB4C-FF10DC2F28EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedDocs.DocumentChanges", "DistributedDocs.DocumentChanges\DistributedDocs.DocumentChanges.csproj", "{131F44BE-B8C7-4AB2-8CA6-1E86CBCEBD7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{7FA83CD1-5116-43FC-AB4C-FF10DC2F28EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FA83CD1-5116-43FC-AB4C-FF10DC2F28EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FA83CD1-5116-43FC-AB4C-FF10DC2F28EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{131F44BE-B8C7-4AB2-8CA6-1E86CBCEBD7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{131F44BE-B8C7-4AB2-8CA6-1E86CBCEBD7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{131F44BE-B8C7-4AB2-8CA6-1E86CBCEBD7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{131F44BE-B8C7-4AB2-8CA6-1E86CBCEBD7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

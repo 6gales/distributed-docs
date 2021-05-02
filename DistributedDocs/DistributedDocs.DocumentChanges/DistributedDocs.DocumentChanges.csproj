@@ -5,8 +5,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DistributedDocs.DocumentChanges\DistributedDocs.DocumentChanges.csproj" />
-  </ItemGroup>
-
 </Project>

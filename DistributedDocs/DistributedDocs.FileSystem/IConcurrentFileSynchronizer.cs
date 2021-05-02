@@ -1,9 +1,7 @@
-﻿using DistributedDocs.VersionHistory;
-
-namespace DistributedDocs.FileSystem
+﻿namespace DistributedDocs.FileSystem
 {
-    public interface IConcurrentFileSynchronizer
+    public interface IConcurrentFileSynchronizer<in T> where T : notnull
     {
-        void AddCommit(ITextDiff textDiff);
+        void AddChange(T change);
     }
 }
