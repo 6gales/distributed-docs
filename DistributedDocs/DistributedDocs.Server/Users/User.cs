@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 
 namespace DistributedDocs.Server.Users
 {
@@ -7,7 +6,8 @@ namespace DistributedDocs.Server.Users
 	{
 		public Guid UserGuid { get; set; }
 		public string UserName { get; set; } = string.Empty;
-		public SocketAddress? SocketAddress { get; set; }
+		public string Host { get; set; } = string.Empty;
+		public int Port { get; set; }
 
 	}
 }

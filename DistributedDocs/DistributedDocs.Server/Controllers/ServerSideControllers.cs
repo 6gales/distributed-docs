@@ -27,13 +27,13 @@ namespace DistributedDocs.Server.Controllers
 			//_concurrentVersionHistory.AddCommit();
 		}
 
-		[Route("commit")]
-		[HttpPut]
-		public async Task<Response<EmptyResponseBody>> ChangeCommit([FromBody] ServerCommit serverCommit)
-		{
-			return new Response<EmptyResponseBody>();
-			//_concurrentVersionHistory.AddCommit();
-		}
+		//[Route("commit")]
+		//[HttpPut]
+		//public async Task<Response<EmptyResponseBody>> ChangeCommit([FromBody] ServerCommit serverCommit)
+		//{
+		//	return new Response<EmptyResponseBody>();
+		//	//_concurrentVersionHistory.AddCommit();
+		//}
 
 		[Route("history")]
 		[HttpGet]

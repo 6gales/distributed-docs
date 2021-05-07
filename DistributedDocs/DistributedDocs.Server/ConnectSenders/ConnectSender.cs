@@ -21,7 +21,6 @@ namespace DistributedDocs.Server.ConnectSenders
 			_udpSender.JoinMulticastGroup(_group);
 
 			_timer = new Timer(Send, null, 0, 60 * 1000);
-
 		}
 
 		//public void Start() => _thread.Start();
