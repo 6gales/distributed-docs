@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributedDocs.VersionHist
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributedDocs.FileSystem", "DistributedDocs.FileSystem\DistributedDocs.FileSystem.csproj", "{7FA83CD1-5116-43FC-AB4C-FF10DC2F28EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedDocs.DocumentChanges", "DistributedDocs.DocumentChanges\DistributedDocs.DocumentChanges.csproj", "{131F44BE-B8C7-4AB2-8CA6-1E86CBCEBD7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributedDocs.DocumentChanges", "DistributedDocs.DocumentChanges\DistributedDocs.DocumentChanges.csproj", "{131F44BE-B8C7-4AB2-8CA6-1E86CBCEBD7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

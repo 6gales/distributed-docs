@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DistributedDocs.FileSystem;
 
@@ -7,7 +8,7 @@ namespace DistributedDocs.VersionHistory
     public sealed class ConcurrentVersionHistory<T> : IConcurrentVersionHistory<T> where T : notnull
     {
         private readonly object _syncRoot = new object();
-        private readonly List<ICommit<T>> _history = new List<ICommit<T>>();
+        private readonly SortedSet<ICommit<T>> _history = new SortedSet<ICommit<T>>();
         private readonly IAuthorInfo _self;
         private readonly IConcurrentFileSynchronizer<T> _fileSynchronizer;
 
@@ -17,10 +18,13 @@ namespace DistributedDocs.VersionHistory
             _fileSynchronizer = fileSynchronizer;
         }
 
+        public Guid Guid { get; } = Guid.NewGuid();
+
         public ICommit<T> CommitChange(T change)
         {
             lock (_syncRoot)
             {
+                _history.Reverse();
                 var commit = new Commit<T>(_history.LastOrDefault()?.Id ?? 0, _self, change);
                 _history.Add(commit);
                 _fileSynchronizer.AddChange(change);

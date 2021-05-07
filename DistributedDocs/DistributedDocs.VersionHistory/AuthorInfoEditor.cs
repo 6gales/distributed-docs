@@ -18,6 +18,5 @@ namespace DistributedDocs.VersionHistory
             var name = Name ?? "Anonymous";
             return new AuthorInfo(Guid, name);
         }
-
     }
 }
