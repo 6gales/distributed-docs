@@ -8,6 +8,8 @@ namespace DistributedDocs.Server.Users
 	{
 		private readonly Dictionary<Guid, IUser> _users = new Dictionary<Guid, IUser>();
 
+		public IUser Self { get; } = new User();
+
 		public void AddUser(IUser user)
 		{
 			_users.Add(user.UserGuid, user);

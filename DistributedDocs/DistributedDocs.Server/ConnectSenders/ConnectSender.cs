@@ -23,8 +23,6 @@ namespace DistributedDocs.Server.ConnectSenders
 			_timer = new Timer(Send, null, 0, 60 * 1000);
 		}
 
-		//public void Start() => _thread.Start();
-
 		private byte[] CreateSendMessage()
 		{
 			object a = new object();
