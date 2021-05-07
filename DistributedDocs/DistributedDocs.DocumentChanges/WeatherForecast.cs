@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DistributedDocs.VersionHistory
+namespace DistributedDocs.DocumentChanges
 {
     public sealed class WeatherForecast
     {
