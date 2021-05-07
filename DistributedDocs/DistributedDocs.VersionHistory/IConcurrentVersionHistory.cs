@@ -1,7 +1,13 @@
-﻿namespace DistributedDocs.VersionHistory
+﻿using System;
+
+namespace DistributedDocs.VersionHistory
 {
-    public interface IConcurrentVersionHistory
+    public interface IConcurrentVersionHistory<T> where T : notnull
     {
-        void AddCommit(ITextDiff textDiff);
+        Guid Guid { get; }
+
+        ICommit<T> CommitChange(T change);
+
+        ICommit<T>? AddCommit(ICommit<T> commit);
     }
 }

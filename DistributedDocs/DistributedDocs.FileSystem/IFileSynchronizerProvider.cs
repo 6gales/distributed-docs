@@ -1,7 +1,7 @@
 ﻿namespace DistributedDocs.FileSystem
 {
-    interface IFileSynchronizerProvider
+    public interface IFileSynchronizerProvider<in T> where T : notnull
     {
-        IConcurrentFileSynchronizer Provide(string name, string? path = null);
+        IConcurrentFileSynchronizer<T> ProvideFileSynchronizer(string name, string? path = null);
     }
 }

@@ -1,11 +1,11 @@
-﻿using DistributedDocs.VersionHistory;
+using DistributedDocs.DocumentChanges;
 using System;
 using System.IO;
 using System.Text;
 
 namespace DistributedDocs.FileSystem
 {
-    public sealed class ConcurrentFileSynchronizer : IConcurrentFileSynchronizer
+    public sealed class ConcurrentFileSynchronizer : IConcurrentFileSynchronizer<ITextDiff>
     {
         private readonly FileStream _fileStream;
         private readonly Encoding _encoding;
@@ -18,7 +18,7 @@ namespace DistributedDocs.FileSystem
             _charSize = encoding.GetByteCount("b");
         }
 
-        public void AddCommit(ITextDiff textDiff)
+        public void AddChange(ITextDiff textDiff)
         {
             Delete(textDiff.StartIndex, textDiff.EndIndex);
             Insert(textDiff.StartIndex, textDiff.Text);

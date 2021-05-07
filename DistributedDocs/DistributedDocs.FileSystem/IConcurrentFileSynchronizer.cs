@@ -1,10 +1,9 @@
-﻿using DistributedDocs.VersionHistory;
 using System;
 
 namespace DistributedDocs.FileSystem
 {
-    public interface IConcurrentFileSynchronizer : IDisposable
+    public interface IConcurrentFileSynchronizer<in T> : IDisposable where T : notnull
     {
-        void AddCommit(ITextDiff textDiff);
+        void AddChange(T change);
     }
 }
