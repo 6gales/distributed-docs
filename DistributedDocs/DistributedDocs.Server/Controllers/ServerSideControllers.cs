@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using DistributedDocs.DocumentChanges;
 using DistributedDocs.Server.ClientModels;
 using DistributedDocs.Server.Models.ServerModels;
 using DistributedDocs.Server.Users;
@@ -11,11 +12,11 @@ namespace DistributedDocs.Server.Controllers
 	[Route("/server")]
 	internal sealed class ServerSideController : ControllerBase
 	{
-		private readonly IConcurrentVersionHistory _concurrentVersionHistory;
+		private readonly IVersionHistoryProvider<ITextDiff> _versionHistoryProvider;
 
-		public ServerSideController(IConcurrentVersionHistory concurrentVersionHistory)
+		public ServerSideController(IVersionHistoryProvider<ITextDiff> versionHistoryProvider)
 		{
-			_concurrentVersionHistory = concurrentVersionHistory;
+			_versionHistoryProvider = versionHistoryProvider;
 		}
 
 		[Route("commit")]

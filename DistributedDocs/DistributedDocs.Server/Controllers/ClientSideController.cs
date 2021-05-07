@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using DistributedDocs.DocumentChanges;
 using DistributedDocs.VersionHistory;
 using DistributedDocs.Server.ClientModels;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,11 @@ namespace DistributedDocs.Server.Controllers
 	[Route("/client")]
 	internal sealed class ClientSideController : ControllerBase
 	{
-		private readonly IConcurrentVersionHistory _concurrentVersionHistory;
+		private readonly IVersionHistoryProvider<ITextDiff> _versionHistoryProvider;
 
-		public ClientSideController(IConcurrentVersionHistory concurrentVersionHistory)
+		public ClientSideController(IVersionHistoryProvider<ITextDiff> versionHistoryProvider)
 		{
-			_concurrentVersionHistory = concurrentVersionHistory;
+			_versionHistoryProvider = versionHistoryProvider;
 		}
 
 		[Route("commit")]

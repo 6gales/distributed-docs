@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DistributedDocs.VersionHistory\DistributedDocs.VersionHistory.csproj" />
+    <ProjectReference Include="..\DistributedDocs.DocumentChanges\DistributedDocs.DocumentChanges.csproj" />
   </ItemGroup>
 
 </Project>
