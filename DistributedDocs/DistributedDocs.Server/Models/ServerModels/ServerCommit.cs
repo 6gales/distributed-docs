@@ -1,4 +1,5 @@
 ﻿using System;
+using DistributedDocs.Server.ClientModels;
 
 namespace DistributedDocs.Server.Models.ServerModels
 {
@@ -6,8 +7,6 @@ namespace DistributedDocs.Server.Models.ServerModels
 	{
 		public Guid UserGuid { get; set; }
 		public int CommitId { get; set; }
-		public int BeginIndex { get; set; }
-		public int EndIndex { get; set; }
-		public string String { get; set; } = string.Empty;
+		public ClientCommit? Commit { get; set; }
 	}
 }

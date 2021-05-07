@@ -1,6 +1,6 @@
-﻿namespace DistributedDocs.Server.Models
+﻿namespace DistributedDocs.Server.ClientModels
 {
-	internal sealed class Response<T>
+	public sealed class Response<T>
 		where T : class
 	{
 		public int ErrorCode { get; set; }

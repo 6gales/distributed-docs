@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using DistributedDocs.Server.Models;
-using DistributedDocs.Server.Models.ClientModels;
-using DistributedDocs.Server.Models.ServerModels;
+using System.Threading.Tasks;
 using DistributedDocs.VersionHistory;
+using DistributedDocs.Server.ClientModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DistributedDocs.Server.Controllers
@@ -19,16 +18,38 @@ namespace DistributedDocs.Server.Controllers
 
 		[Route("commit")]
 		[HttpPost]
-		public Response<EmptyResponseBody> AddCommit([FromBody] ClientCommit clientCommit)
+		public async Task<Response<EmptyResponseBody>> AddCommit([FromBody] ClientCommit clientCommit)
 		{
 			return new Response<EmptyResponseBody>();
 		}
 
-		[Route("bind")]
-		[HttpGet]
-		public Response<List<ClientCommit>> Bind()
+		[Route("user")]
+		[HttpPost]
+		public async Task<Response<EmptyResponseBody>> ChangeName([FromBody] ChangeNameRequest changeNameRequest)
 		{
-			return new Response<List<ClientCommit>>();
+
+			return new Response<EmptyResponseBody>();
+		}
+
+		[Route("connect")]
+		[HttpPost]
+		public async Task<Response<EmptyResponseBody>> ConnectToDocument([FromBody] DocumentConnectRequest connectRequest)
+		{
+			return new Response<EmptyResponseBody>();
+		}
+
+		[Route("bind/commits")]
+		[HttpGet]
+		public async Task<Response<IReadOnlyCollection<ClientCommit>>> BindCommits()
+		{
+			return new Response<IReadOnlyCollection<ClientCommit>>();
+		}
+
+		[Route("bind/documents")]
+		[HttpGet]
+		public async Task<Response<IReadOnlyCollection<DocumentInfo>>> BindDocuments()
+		{
+			return new Response<IReadOnlyCollection<DocumentInfo>>();
 		}
 
 	}

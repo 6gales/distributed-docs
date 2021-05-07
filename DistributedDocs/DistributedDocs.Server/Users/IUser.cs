@@ -3,11 +3,10 @@ using System.Net;
 
 namespace DistributedDocs.Server.Users
 {
-	internal sealed class User : IUser
+	public interface IUser
 	{
 		public Guid UserGuid { get; set; }
-		public string UserName { get; set; } = string.Empty;
+		public string UserName { get; set; }
 		public SocketAddress? SocketAddress { get; set; }
-
 	}
 }

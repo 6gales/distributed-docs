@@ -2,7 +2,7 @@
 
 namespace DistributedDocs.Server.Models.ServerModels
 {
-	internal sealed class UserAddRequest
+	internal sealed class UserGetResponse
 	{
 		public IUser? User { get; set; }
 	}

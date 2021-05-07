@@ -1,40 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DistributedDocs.Server.Models.ServerModels;
 
 namespace DistributedDocs.Server.Users
 {
 	internal sealed class UserStorage : IUserStorage
 	{
-		private readonly Dictionary<Guid, User> _users = new Dictionary<Guid, User>();
+		private readonly Dictionary<Guid, IUser> _users = new Dictionary<Guid, IUser>();
 
-		public User AddUser(string userName, UserStatus userStatus)
+		public void AddUser(IUser user)
 		{
-			var userGuid = new Guid();
-			while (_users.ContainsKey(userGuid))
+			_users.Add(user.UserGuid, user);
+		}
+
+		public IUser GetUserByGuid(Guid userGuid)
+		{
+			if (_users.TryGetValue(userGuid, out var user))
 			{
-				userGuid = Guid.NewGuid();
+				return user;
 			}
 
-			User newUser = new User
-			{
-				UserGuid = userGuid,
-				UserName = userName,
-				UserStatus = userStatus
-			};
-
-			_users.Add(userGuid, newUser);
-
-			return newUser;
+			throw new ArgumentException($"User with specified id not found: {userGuid}");
 		}
 
-		public User GetUserByGuid(Guid userGuid)
-		{
-			return _users.FirstOrDefault(pair => pair.Key == userGuid).Value;
-		}
-
-		public List<User> GetUserList()
+		public IReadOnlyCollection<IUser> GetUserList()
 		{
 			return _users.Values.ToList();
 		}
