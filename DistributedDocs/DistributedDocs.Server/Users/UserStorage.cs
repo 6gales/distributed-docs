@@ -6,18 +6,28 @@ namespace DistributedDocs.Server.Users
 {
 	internal sealed class UserStorage : IUserStorage
 	{
-		private readonly Dictionary<Guid, IUser> _users = new Dictionary<Guid, IUser>();
+		private readonly Dictionary<Guid, Dictionary<Guid, IUser>> _documentUsers =
+			new Dictionary<Guid, Dictionary<Guid, IUser>>();
 
-		public IUser Self { get; } = new User();
-
-		public void AddUser(IUser user)
+		private Dictionary<Guid, IUser> GetOrCreate(Guid documentId)
 		{
-			_users.Add(user.UserGuid, user);
+			if (!_documentUsers.TryGetValue(documentId, out var users))
+			{
+				users = new Dictionary<Guid, IUser>();
+				_documentUsers[documentId] = users;
+			}
+
+			return users;
 		}
 
-		public IUser GetUserByGuid(Guid userGuid)
+		public void AddUser(Guid documentId, IUser user)
 		{
-			if (_users.TryGetValue(userGuid, out var user))
+			GetOrCreate(documentId).Add(user.UserGuid, user);
+		}
+
+		public IUser GetUserByGuid(Guid documentId, Guid userGuid)
+		{
+			if (GetOrCreate(documentId).TryGetValue(userGuid, out var user))
 			{
 				return user;
 			}
@@ -25,17 +35,14 @@ namespace DistributedDocs.Server.Users
 			throw new ArgumentException($"User with specified id not found: {userGuid}");
 		}
 
-		public IReadOnlyCollection<IUser> GetUserList()
+		public IReadOnlyCollection<IUser> GetUserList(Guid documentId)
 		{
-			return _users.Values.ToList();
+			return GetOrCreate(documentId).Values.ToList();
 		}
 
-		public void DeleteUser(Guid userGuid)
+		public void DeleteUser(Guid documentId, Guid userGuid)
 		{
-			if (_users.ContainsKey(userGuid))
-			{
-				_users.Remove(userGuid);
-			}
+			GetOrCreate(documentId).Remove(userGuid);
 		}
 	}
 }

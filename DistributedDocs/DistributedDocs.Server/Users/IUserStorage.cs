@@ -5,11 +5,9 @@ namespace DistributedDocs.Server.Users
 {
 	internal interface IUserStorage
 	{
-		public IUser Self { get; }
-
-		public void AddUser(IUser user);
-		public IUser GetUserByGuid(Guid userGuid);
-		public IReadOnlyCollection<IUser> GetUserList();
-		public void DeleteUser(Guid userGuid);
+		public void AddUser(Guid documentId, IUser user);
+		public IUser GetUserByGuid(Guid documentId, Guid userGuid);
+		public IReadOnlyCollection<IUser> GetUserList(Guid documentId);
+		public void DeleteUser(Guid documentId, Guid userGuid);
 	}
 }

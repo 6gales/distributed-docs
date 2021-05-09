@@ -76,20 +76,20 @@ namespace DistributedDocs.Server.Controllers
 				};
 			}
 
-			_userStorage.AddUser(userConnectRequest.User);
+			_userStorage.AddUser(userConnectRequest.DocumentId, userConnectRequest.User);
 
-			return GetUsers();
+			return GetUsers(userConnectRequest.DocumentId);
 		}
 
 		[Route("users")]
 		[HttpGet]
-		public Response<IReadOnlyCollection<IUser>> GetUsers()
+		public Response<IReadOnlyCollection<IUser>> GetUsers([FromQuery]Guid documentId)
 		{
 			return new Response<IReadOnlyCollection<IUser>>
 			{
 				ErrorCode = 0,
 				ErrorString = string.Empty,
-				ResponseBody = _userStorage.GetUserList(),
+				ResponseBody = _userStorage.GetUserList(documentId),
 
 			};
 		}

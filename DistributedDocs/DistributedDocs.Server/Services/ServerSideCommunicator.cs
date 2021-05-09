@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DistributedDocs.Server.ClientModels;
 using DistributedDocs.Server.Models.ServerModels;
 using DistributedDocs.Server.Users;
+using DistributedDocs.VersionHistory;
 using Newtonsoft.Json;
 
 namespace DistributedDocs.Server.Services
@@ -17,9 +18,12 @@ namespace DistributedDocs.Server.Services
 		private readonly IUserStorage _userStorage;
 		private readonly Encoding _httpEncoding = Encoding.GetEncoding("ISO-8859-1");
 
-		public ServerSideCommunicator(IUserStorage userStorage)
+		private readonly IAuthorInfoEditor _authorInfoEditor;
+
+		public ServerSideCommunicator(IUserStorage userStorage, IAuthorInfoEditor authorInfoEditor)
 		{
 			_userStorage = userStorage;
+			_authorInfoEditor = authorInfoEditor;
 		}
 
 		private HttpRequestMessage BuildMessage(HttpMethod httpMethod, IUser user, string endpoint, object? content)
@@ -40,9 +44,12 @@ namespace DistributedDocs.Server.Services
 		//[HttpPost]
 		public async Task SendCommitToGroup(ServerCommit serverCommit)
 		{
-			foreach (var user in _userStorage.GetUserList())
+			if (serverCommit.Commit != null)
 			{
-				await SendCommitToUser(user, serverCommit);
+				foreach (var user in _userStorage.GetUserList(serverCommit.Commit.DocumentId))
+				{
+					await SendCommitToUser(user, serverCommit);
+				}
 			}
 		}
 
@@ -62,7 +69,7 @@ namespace DistributedDocs.Server.Services
 
 		public async Task<List<ServerCommit>> GetHistory(Guid documentGuid)
 		{
-			var user = _userStorage.GetUserList().FirstOrDefault();
+			var user = _userStorage.GetUserList(documentGuid).FirstOrDefault();
 			if (user is null)
 			{
 				return new List<ServerCommit>();
@@ -84,16 +91,20 @@ namespace DistributedDocs.Server.Services
 
 		//[Route("connect")]
 		//[HttpPost]
-		public async Task<IReadOnlyCollection<IUser>> ConnectToDocument(Guid documentId, Guid userId)
+		public async Task<Response<EmptyResponseBody>> ConnectToDocument(Guid documentId, Guid userId)
 		{
 			// TODO: handle throw exception if not found
-			var user = _userStorage.GetUserByGuid(userId);
+			var user = _userStorage.GetUserByGuid(documentId, userId);
 			
 
 			var requestBody = new UserConnectRequest
 			{
 				DocumentId = documentId,
-				User = _userStorage.Self,
+				User = new User
+				{
+					UserGuid = _authorInfoEditor.Guid,
+					UserName = _authorInfoEditor.Name ?? string.Empty,
+				},
 			};
 
 			var request = BuildMessage(HttpMethod.Post, user, "connect", requestBody);
@@ -102,19 +113,38 @@ namespace DistributedDocs.Server.Services
 			var responseStr = await response.Content.ReadAsStringAsync();
 
 			var data = JsonConvert.DeserializeObject<Response<IReadOnlyCollection<IUser>>>(responseStr);
-			if (data is null || data.ErrorCode != 0 || data.ResponseBody is null)
+			if (data is null)
 			{
-				return new List<IUser>();
+				return new Response<EmptyResponseBody>
+				{
+					// TODO: error codes
+					ErrorCode = 45,
+					ErrorString = ""
+				};
+			}
+			if (data.ErrorCode != 0 || data.ResponseBody is null)
+			{
+				return new Response<EmptyResponseBody>
+				{
+					ErrorCode = data.ErrorCode,
+					ErrorString = data.ErrorString,
+				};
 			}
 
-			return data.ResponseBody;
+			// Add users to document users in user storage
+			foreach (var documentUser in data.ResponseBody)
+			{
+				_userStorage.AddUser(documentId, documentUser);
+			}
+
+			return new Response<EmptyResponseBody>();
 		}
 
 		//[Route("users")]
 		//[HttpGet]
-		public async Task<IReadOnlyCollection<IUser>> GetUsers()
+		public async Task<IReadOnlyCollection<IUser>> GetUsers(Guid documentId)
 		{
-			var user = _userStorage.GetUserList().FirstOrDefault();
+			var user = _userStorage.GetUserList(documentId).FirstOrDefault();
 			if (user is null)
 			{
 				return new List<IUser>();
