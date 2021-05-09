@@ -1,15 +1,44 @@
-@page "/create/{Name:string}"
+@page "/documents/{Id:int}"
 @inject NavigationManager NavigationManager
 
-<h1>A specific product</h1>
+<h3>@_document.Name</h3>
+@* <p> *@
+@*     <label> *@
+@*         Normal Blazor binding: *@
+@*         <input @bind="TextAreaValue" /> *@
+@*     </label> *@
+@* </p> *@
 
-This is for Id @Id
+<textArea
+    value="@TextAreaValue" rows="17" cols="110" @oninput="@OnTextChanged" >
+</textArea>
 
-<div>
-    <NavLink href="create" target="_blank">Products</NavLink>
-</div>
+<button @onclick="OnButton">Save file</button>
 
 @code {
     [Parameter]
     public int Id { get; set; }
+
+    Data.Document _document;
+
+    private static string TextAreaValue { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        _document = Data.Documents.GetDocument(Id);
+        TextAreaValue = _document.Content;
+    }
+    
+    private void OnTextChanged(ChangeEventArgs args)
+    {
+        var newValue = args.Value.ToString();
+        TextAreaValue = newValue;
+    }
+
+    private void OnButton()
+    {
+        _document.Content = TextAreaValue;
+        Data.Documents.UpdateDocument(_document);
+        NavigationManager.NavigateTo("documents/");
+    }
 }

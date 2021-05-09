@@ -7,26 +7,21 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
         @* <li class="nav-item px-3"> *@
-        @*     <NavLink class="nav-link" href="create"> *@
-        @*         <span class="oi oi-plus" aria-hidden="true"></span> CreateDocument *@
+        @*     <NavLink class="nav-link" href="" Match="NavLinkMatch.All"> *@
+        @*         <span class="oi oi-home" aria-hidden="true"></span> Home *@
         @*     </NavLink> *@
         @* </li> *@
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="new">
-                <span class="oi oi-text" aria-hidden="true"></span> NewFile
+            <NavLink class="nav-link" href="documents">
+                <span class="oi oi-text" aria-hidden="true"></span> Documents
             </NavLink>
         </li>
-        @* <li class="nav-item px-3">  *@
-        @* <NavLink class="nav-link" href="products"> *@
-        @*         <span class="oi oi-text" aria-hidden="true"></span> NewFile *@
-        @* </NavLink> *@
-        @* </li> *@
+         <li class="nav-item px-3">
+                <NavLink class="nav-link" href="new">
+                        <span class="oi oi-text" aria-hidden="true"></span> NewDocument
+                </NavLink>
+                </li>
     </ul>
 </div>
 

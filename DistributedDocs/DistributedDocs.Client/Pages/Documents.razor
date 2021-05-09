@@ -1,0 +1,25 @@
+@page "/documents"
+@inject NavigationManager NavigationManager
+
+<h1>Documents</h1>
+@foreach(var document in _documents)
+    {
+        <div>
+            <NavLink href="@Data.Documents.Url(_documents.IndexOf(document))"
+                     target="_blank">@document.Name</NavLink>
+        </div>
+    }
+
+@code {
+    List<Data.Document> _documents;
+    
+    protected override void OnInitialized()
+    {
+        _documents = Data.Documents.GetDocuments();
+    }
+    
+    private void OnButton()
+    {
+        _documents = Data.Documents.GetDocuments();
+    }
+}

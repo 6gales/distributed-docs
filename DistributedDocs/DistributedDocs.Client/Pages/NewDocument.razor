@@ -1,0 +1,27 @@
+@page "/new"
+@inject NavigationManager NavigationManager
+
+<h3>Create new document</h3>
+
+<input placeholder="Enter file name"
+       value="@FileName"/>
+<input placeholder="Enter file path"
+       value="@FilePath"/>
+
+<button @onclick="OnButton">Create</button>
+
+@code {
+    public string FileName { get; set; } = string.Empty;
+    public string FilePath { get; set; } = string.Empty;
+    private int _id;
+    
+    private void OnButton()
+    {
+       _id = Data.Documents.AddDocument(new Data.Document
+       {
+           Name = FileName,
+           Path = FilePath
+       });
+        NavigationManager.NavigateTo("documents/" + _id);
+    }
+}
