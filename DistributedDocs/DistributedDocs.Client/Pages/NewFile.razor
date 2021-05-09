@@ -1,0 +1,30 @@
+@page "/new"
+
+<h3>FileName</h3>
+<p>
+    <label>
+        Normal Blazor binding:
+        <input @bind="TextAreaValue" />
+    </label>
+</p>
+
+<textArea
+    value="@TextAreaValue" @oninput="@OnTextChanged" >
+</textArea>
+
+<button @onclick="OnButton">Click me</button>
+
+@code {
+    private static string TextAreaValue { get; set; } = string.Empty;
+
+    private void OnTextChanged(ChangeEventArgs args)
+    {
+        var newValue = args.Value.ToString();
+        TextAreaValue = newValue;
+    }
+
+    private void OnButton()
+    {
+        TextAreaValue = "Good";
+    }
+}

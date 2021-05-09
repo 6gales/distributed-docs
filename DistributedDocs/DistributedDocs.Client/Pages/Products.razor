@@ -1,0 +1,33 @@
+@page "/products"
+@inject NavigationManager NavigationManager
+
+<h1>Products</h1>
+Page: @_pageParam  PageSize: @_pageSizeParam
+
+@foreach (var product in _products)
+{
+    <div>
+        <NavLink href="@product.Url" target="_blank">@product.Name</NavLink>
+    </div>
+}
+
+@code {
+    List<Data.Product> _products;
+    int? _pageParam;
+    int? _pageSizeParam;
+
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+        if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query).TryGetValue("page", out var param))
+        {
+            _pageParam = Int32.Parse(param);
+        }
+        if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query).TryGetValue("pageSize", out var param2))
+        {
+            _pageSizeParam = Int32.Parse(param2);
+        }
+        _products = Data.Products.GetProducts(_pageParam, _pageSizeParam);
+    }
+}

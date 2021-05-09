@@ -1,0 +1,15 @@
+@page "/create/{Name:string}"
+@inject NavigationManager NavigationManager
+
+<h1>A specific product</h1>
+
+This is for Id @Id
+
+<div>
+    <NavLink href="create" target="_blank">Products</NavLink>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+}
