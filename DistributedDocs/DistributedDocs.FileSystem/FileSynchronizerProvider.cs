@@ -8,10 +8,13 @@ namespace DistributedDocs.FileSystem
     {
         public IConcurrentFileSynchronizer<ITextDiff> ProvideFileSynchronizer(string name, string? path)
         {
-            path = path != null ? $"{path}//{name}" : name;
-            var stream = new FileStream(path, FileMode.OpenOrCreate);
+            path = !string.IsNullOrWhiteSpace(path) ? $"{path}//{name}" : name;
+            if (!File.Exists(path))
+            {
+                using var stream = File.Create(path);
+            }
             
-            return new ConcurrentFileSynchronizer(stream, Encoding.Unicode);
+            return new ConcurrentFileSynchronizer(path);
         }
     }
 }

@@ -1,4 +1,5 @@
 using DistributedDocs.DocumentChanges;
+using DistributedDocs.Utils;
 using System;
 using System.IO;
 using System.Text;
@@ -7,89 +8,56 @@ namespace DistributedDocs.FileSystem
 {
     public sealed class ConcurrentFileSynchronizer : IConcurrentFileSynchronizer<ITextDiff>
     {
-        private readonly FileStream _fileStream;
-        private readonly Encoding _encoding;
-        private readonly int _charSize;
-
-        public ConcurrentFileSynchronizer(FileStream stream, Encoding encoding)
+        private readonly string _path;
+        public ConcurrentFileSynchronizer(string path)
         {
-            _fileStream = stream;
-            _encoding = encoding;
-            _charSize = encoding.GetByteCount("b");
+            _path = path;
         }
 
         public void AddChange(ITextDiff textDiff)
         {
-            Delete(textDiff.StartIndex, textDiff.EndIndex);
-            Insert(textDiff.StartIndex, textDiff.Text);
+            var content = new StringBuilder(File.ReadAllText(_path));
+
+            Delete(textDiff.StartIndex, textDiff.EndIndex, content);
+            Insert(textDiff.StartIndex, textDiff.Text, content);
+
+            File.WriteAllText(_path, content.ToString());
         }
 
-        private void Delete(int from, int to)
+        private void Delete(int from, int to, StringBuilder content)
         {
             if (from == to)
             {
                 return;
             }
 
-            if (from < 0 || from > _fileStream.Length)
+            if (from < 0 || from > content.Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(from));
             }
 
-            if (to < 0 || to > _fileStream.Length)
+            if (to < 0 || to > content.Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(from));
             }
 
-
+            content.Remove(from, to - from);
         }
 
-        private void Insert(int from, string text)
+        private void Insert(int from, string text, StringBuilder content)
         {
             if (string.IsNullOrEmpty(text))
             {
                 return;
             }
 
-            if (from < 0 || from > _fileStream.Length)
+            if (from < 0 || from > content.Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(from));
             }
-            const int maxBufferSize = 1024 * 512;
-            int bufferSize = maxBufferSize;
-            long temp = _fileStream.Length - from;
-            if (temp <= maxBufferSize)
-            {
-                bufferSize = (int)temp;
-            }
-            byte[] buffer = new byte[bufferSize];
-            long currentPositionToRead = _fileStream.Length;
-            int numberOfBytesToRead;
-            while (true)
-            {
-                numberOfBytesToRead = bufferSize;
-                temp = currentPositionToRead - from;
-                if (temp < bufferSize)
-                {
-                    numberOfBytesToRead = (int)temp;
-                }
-                currentPositionToRead -= numberOfBytesToRead;
-                _fileStream.Position = currentPositionToRead;
-                _fileStream.Read(buffer, 0, numberOfBytesToRead);
-                _fileStream.Position = currentPositionToRead + text.Length;
-                _fileStream.Write(buffer, 0, numberOfBytesToRead);
-                if (temp <= bufferSize)
-                {
-                    break;
-                }
-            }
-            _fileStream.Position = from;
-            _fileStream.Write(text, 0, text.Length);
+
+            content.Insert(from, text);
         }
 
-        public void Dispose()
-        {
-            _fileStream.Close();
-        }
     }
 }

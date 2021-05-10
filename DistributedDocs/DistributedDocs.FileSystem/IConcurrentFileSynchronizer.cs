@@ -2,7 +2,7 @@ using System;
 
 namespace DistributedDocs.FileSystem
 {
-    public interface IConcurrentFileSynchronizer<in T> : IDisposable where T : notnull
+    public interface IConcurrentFileSynchronizer<in T>  where T : notnull
     {
         void AddChange(T change);
     }
