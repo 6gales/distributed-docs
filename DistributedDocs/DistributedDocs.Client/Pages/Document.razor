@@ -1,10 +1,14 @@
 @page "/documents/{Id}"
 @using DistributedDocs.Server.ClientModels
+@using System.Text
 @inject NavigationManager NavigationManager
+@inject HttpClient Http
 
-<h3>@_document.DocumentName</h3>
+<h3 @_document.DocumentName ></h3>
+
 <textArea
-    value="@TextAreaValue" rows="17" cols="110" @oninput="@OnTextChanged" >
+    value="@TextAreaValue" rows="17" cols="110" @oninput="@OnTextChanged"       
+>
 </textArea>
 
 @code {
@@ -13,20 +17,35 @@
     public string Id { get; set; } = string.Empty;
 
     private DocumentInfo _document;
-
+    
     private static string TextAreaValue { get; set; } = string.Empty;
 
-    protected override void OnParametersSet()
+    protected override async Task OnInitializedAsync()
     {
+        //TODO: Get history
         _document = DocumentManager.GetDocument(Guid.Parse(Id));
-        // TODO: get content
-        // TextAreaValue = _document.Content;
+        //TextAreaValue = from history
     }
-    
-    private void OnTextChanged(ChangeEventArgs args)
+
+    private async Task OnTextChanged(ChangeEventArgs args)
     {
         var newValue = args.Value.ToString();
+        //TODO commit from texts
+        var commit = new ClientCommit
+        {
+            DocumentId = _document.DocumentId
+        };
         TextAreaValue = newValue;
-        //TODO: send commit
+
+        await Http.PostAsJsonAsync("/client/commit", commit);
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var clientCommit = await Http.GetFromJsonAsync<ClientCommit>("/client/bind/commit");
+        TextAreaValue = new StringBuilder(TextAreaValue)
+            .Remove(clientCommit.BeginIndex, clientCommit.EndIndex - clientCommit.BeginIndex)
+            .Insert(clientCommit.BeginIndex, clientCommit.String)
+            .ToString();
     }
 }

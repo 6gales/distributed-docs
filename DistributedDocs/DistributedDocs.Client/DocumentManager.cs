@@ -6,7 +6,10 @@ namespace DistributedDocs.Client
 {
     internal static class DocumentManager
     {
-        private static readonly Dictionary<Guid, DocumentInfo> Documents = new Dictionary<Guid, DocumentInfo>();
+        private static readonly Dictionary<Guid, DocumentInfo> Documents = new Dictionary<Guid, DocumentInfo>()
+        {
+            [Guid.Empty] = new DocumentInfo {DocumentId = Guid.Empty, DocumentName = "aaaa"}
+        };
 
         public static IReadOnlyCollection<DocumentInfo> DocumentsInfos => Documents.Values;
 
