@@ -10,7 +10,7 @@ namespace DistributedDocs.Server.Controllers
 {
 	[ApiController]
 	[Route("/server")]
-	internal sealed class ServerSideController : ControllerBase
+	public sealed class ServerSideController : ControllerBase
 	{
 		private readonly DocumentContext _documentContext;
 		private readonly IUserStorage _userStorage;
@@ -44,9 +44,9 @@ namespace DistributedDocs.Server.Controllers
 
 		[Route("history")]
 		[HttpGet]
-		public Response<IReadOnlyCollection<ServerCommit>> GetHistory([FromQuery] Guid documentGuid)
+		public Response<IReadOnlyCollection<ServerCommit>> GetHistory([FromQuery] Guid documentId)
 		{
-			var history = _documentContext.GetHistory(documentGuid);
+			var history = _documentContext.GetHistory(documentId);
 			return new Response<IReadOnlyCollection<ServerCommit>>
 			{
 				ResponseBody = history,

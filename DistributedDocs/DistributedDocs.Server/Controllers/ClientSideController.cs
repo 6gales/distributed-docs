@@ -12,7 +12,7 @@ namespace DistributedDocs.Server.Controllers
 {
 	[ApiController]
 	[Route("/client")]
-	internal sealed class ClientSideController : ControllerBase
+	public sealed class ClientSideController : ControllerBase
 	{
 		private readonly ServerSideCommunicator _serverSideCommunicator;
 		private readonly DocumentContext _documentContext;
@@ -138,7 +138,7 @@ namespace DistributedDocs.Server.Controllers
 				ErrorString = string.Empty,
 				ResponseBody = new DocumentCreateResponse
 				{
-					DocumentGuid = history.Guid,
+					DocumentId = history.Guid,
 				},
 			};
 		}

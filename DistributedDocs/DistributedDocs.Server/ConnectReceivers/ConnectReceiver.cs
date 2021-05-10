@@ -31,6 +31,33 @@ namespace DistributedDocs.Server.ConnectReceivers
 			_thread.Start();
 		}
 
+		private void HandleMessage(byte[] messageBytes)
+		{
+			try
+			{
+				var message = DocumentsInfoPackage.Deserialize(messageBytes);
+
+				if (message.DocumentInfos != null)
+				{
+					foreach (var messageDocumentInfo in message.DocumentInfos)
+					{
+						_documentContext.AddRemoteDocument(messageDocumentInfo.Key.DocumentId,
+							messageDocumentInfo.Key);
+
+						foreach (var user in messageDocumentInfo.Value)
+						{
+							_userStorage.AddUser(messageDocumentInfo.Key.DocumentId, user);
+						}
+
+					}
+				}
+			}
+			catch (ArgumentException)
+			{
+				// TODO: log
+			}
+		}
+
 		private void ReceiveConnects()
 		{
 			try
@@ -40,30 +67,7 @@ namespace DistributedDocs.Server.ConnectReceivers
 					IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
 					var bytes = _udpReceiver.Receive(ref endpoint);
 
-					try
-					{
-						var message = DocumentsInfoPackage.Deserialize(bytes);
-
-						if (message.DocumentInfos != null)
-						{
-							foreach (var messageDocumentInfo in message.DocumentInfos)
-							{
-								_documentContext.AddRemoteDocument(messageDocumentInfo.Key.DocumentId,
-									messageDocumentInfo.Key);
-
-								foreach (var user in messageDocumentInfo.Value)
-								{
-									_userStorage.AddUser(messageDocumentInfo.Key.DocumentId, user);
-								}
-
-							}
-						}
-					}
-					catch (ArgumentException)
-					{
-
-						// TODO: log
-					}
+					HandleMessage(bytes);
 
 				}
 				

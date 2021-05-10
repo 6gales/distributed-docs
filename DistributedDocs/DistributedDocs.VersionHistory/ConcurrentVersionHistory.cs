@@ -37,7 +37,7 @@ namespace DistributedDocs.VersionHistory
             lock (_syncRoot)
             {
                 _history.Reverse();
-                var commit = new Commit<T>(_history.LastOrDefault()?.Id ?? 0, _self, change);
+                var commit = new Commit<T>(_history.LastOrDefault()?.Id + 1 ?? 0, _self, change);
                 SaveCommit(commit);
                 return commit;
             }

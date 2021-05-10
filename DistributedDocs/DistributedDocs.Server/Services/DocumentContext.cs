@@ -10,7 +10,7 @@ using DistributedDocs.Server.Extensions;
 
 namespace DistributedDocs.Server.Services
 {
-	internal sealed class DocumentContext
+	public sealed class DocumentContext
 	{
 		private readonly Dictionary<Guid, IConcurrentVersionHistory<ITextDiff>> _documents =
 			new Dictionary<Guid, IConcurrentVersionHistory<ITextDiff>>();
