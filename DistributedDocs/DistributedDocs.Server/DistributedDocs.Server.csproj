@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -7,10 +7,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="3.2.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DistributedDocs.Client\DistributedDocs.Client.csproj" />
+    <ProjectReference Include="..\DistributedDocs.Server.ClientModels\DistributedDocs.Server.ClientModels.csproj" />
+    <ProjectReference Include="..\DistributedDocs.Utils\DistributedDocs.Utils.csproj" />
     <ProjectReference Include="..\DistributedDocs.VersionHistory\DistributedDocs.VersionHistory.csproj" />
   </ItemGroup>
 
