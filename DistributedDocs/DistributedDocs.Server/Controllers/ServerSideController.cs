@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DistributedDocs.Server.Controllers
 {
+	[ApiController]
 	[Route("/server")]
 	internal sealed class ServerSideController : ControllerBase
 	{

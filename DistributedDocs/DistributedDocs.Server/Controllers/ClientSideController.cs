@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DistributedDocs.Server.Controllers
 {
+	[ApiController]
 	[Route("/client")]
 	internal sealed class ClientSideController : ControllerBase
 	{
