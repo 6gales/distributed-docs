@@ -1,45 +1,56 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using DistributedDocs.Server.ClientModels;
+using DistributedDocs.Server.Models;
+using DistributedDocs.Server.Services;
+using DistributedDocs.Server.Users;
 using DistributedDocs.Utils;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
 
 namespace DistributedDocs.Server.ConnectSenders
 {
 	internal sealed class ConnectSender : Disposable
 	{
+		private readonly IUserStorage _userStorage;
+		private readonly DocumentContext _documentContext;
+
 		private readonly Timer _timer;
 		private readonly UdpClient _udpSender;
 		private const int Port = 5555;
-		private readonly IPAddress _group = IPAddress.Parse("192.168.56.1");
+		private readonly IPAddress _group = IPAddress.Parse("224.0.0.155");
 
-		public ConnectSender()
+		public ConnectSender(IUserStorage userStorage, DocumentContext documentContext)
 		{
+			_userStorage = userStorage;
+			_documentContext = documentContext;
 			_udpSender = new UdpClient(Port);
 			_udpSender.JoinMulticastGroup(_group);
 
 			_timer = new Timer(Send, null, 0, 60 * 1000);
-
 		}
 
-		//public void Start() => _thread.Start();
+		private DocumentsInfoPackage CreateMessage()
+		{
+			var docs = _documentContext.GetDocuments();
+			IReadOnlyDictionary<DocumentInfo, IReadOnlyCollection<IUser>> docsUsers = 
+				docs.ToDictionary(d => d,
+					d=> _userStorage.GetUserList(d.DocumentId));
+
+			var documentsInfoPackage = new DocumentsInfoPackage
+			{
+				DocumentInfos = docsUsers,
+			};
+
+			return documentsInfoPackage;
+		}
 
 		private byte[] CreateSendMessage()
 		{
-			object a = new object();
+			var message = CreateMessage();
 
-
-			MemoryStream ms = new MemoryStream();
-			using (BsonDataWriter writer = new BsonDataWriter(ms))
-			{
-				JsonSerializer serializer = new JsonSerializer();
-				serializer.Serialize(writer, a);
-			}
-
-			var bsonByteArray = ms.ToArray();
-			return bsonByteArray;
+			return message.Serialize();
 		}
 
 		//private 

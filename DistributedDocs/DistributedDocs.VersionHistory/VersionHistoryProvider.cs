@@ -1,4 +1,6 @@
-﻿using DistributedDocs.DocumentChanges;
+﻿using System;
+using System.Collections.Generic;
+using DistributedDocs.DocumentChanges;
 using DistributedDocs.FileSystem;
 
 namespace DistributedDocs.VersionHistory
@@ -20,7 +22,18 @@ namespace DistributedDocs.VersionHistory
         {
             return new ConcurrentVersionHistory<ITextDiff>(
                 _authorProvider.ProvideAuthor(),
-                _synchronizerProvider.ProvideFileSynchronizer(name, path));
+                name,
+                new CommitMerger(_synchronizerProvider.ProvideFileSynchronizer(name, path)));
+        }
+
+        public IConcurrentVersionHistory<ITextDiff> FromExisting(Guid historyId, string name, IEnumerable<ICommit<ITextDiff>> existingCommits)
+        {
+            return new ConcurrentVersionHistory<ITextDiff>(
+                _authorProvider.ProvideAuthor(),
+                name,
+                new CommitMerger(_synchronizerProvider.ProvideFileSynchronizer(name, null)),
+                historyId,
+                existingCommits);
         }
     }
 }

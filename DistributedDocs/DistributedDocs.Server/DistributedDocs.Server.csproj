@@ -18,5 +18,9 @@
     <ProjectReference Include="..\DistributedDocs.VersionHistory\DistributedDocs.VersionHistory.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
 
 </Project>

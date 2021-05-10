@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using DistributedDocs.Server.ClientModels;
+using DistributedDocs.Server.Users;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 
@@ -9,7 +10,7 @@ namespace DistributedDocs.Server.Models
 {
 	internal sealed class DocumentsInfoPackage
 	{
-		public IReadOnlyCollection<DocumentInfo>? DocumentInfos { get; set; }
+		public IReadOnlyDictionary<DocumentInfo, IReadOnlyCollection<IUser>>? DocumentInfos { get; set; }
 
 		public byte[] Serialize()
 		{
