@@ -1,3 +1,10 @@
+using DistributedDocs.DocumentChanges;
+using DistributedDocs.FileSystem;
+using DistributedDocs.Server.ConnectReceivers;
+using DistributedDocs.Server.ConnectSenders;
+using DistributedDocs.Server.Services;
+using DistributedDocs.Server.Users;
+using DistributedDocs.VersionHistory;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -19,9 +26,23 @@ namespace DistributedDocs.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddControllersWithViews();
+	        services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddSingleton<IUserStorage, UserStorage>();
+
+            services.AddSingleton<ServerSideCommunicator, ServerSideCommunicator>();
+            services.AddSingleton<IFileSynchronizerProvider<ITextDiff>, FileSynchronizerProvider>();
+            services.AddSingleton<IVersionHistoryProvider<ITextDiff>, VersionHistoryProvider>();
+
+            var authorInfoEditor = new AuthorInfoEditor();
+            services.AddSingleton<IAuthorInfoEditor>(authorInfoEditor);
+            services.AddSingleton<IAuthorProvider>(authorInfoEditor);
+
+            services.AddSingleton<DocumentContext, DocumentContext>();
+
+			services.AddSingleton<ConnectSender>();
+			services.AddSingleton<ConnectReceiver>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

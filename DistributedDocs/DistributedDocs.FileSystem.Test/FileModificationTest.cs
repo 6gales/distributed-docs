@@ -4,58 +4,59 @@ using System.IO;
 
 namespace DistributedDocs.FileSystem.Test
 {
+    [TestFixture]
     public class Tests
     {
-        private const string _name = "test.txt";
+        private const string Name = "test.txt";
 
         [TearDown]
         public void OnceTimeTearDown()
         {
-            File.Delete(_name);
+            File.Delete(Name);
         }
 
         [Test]
         public void InsertTest()
         {
-            File.WriteAllText(_name, "test");
+            File.WriteAllText(Name, "test");
             var diff  = new TextDiff(1, 1, "a");
-            var synchronizer = new ConcurrentFileSynchronizer(_name);
+            var synchronizer = new ConcurrentFileSynchronizer(Name);
             synchronizer.AddChange(diff);
 
-            Assert.AreEqual("taest", File.ReadAllText(_name));
+            Assert.AreEqual("taest", File.ReadAllText(Name));
         }
 
         [Test]
         public void ProviderTest()
         {
             var provider = new FileSynchronizerProvider();
-            var sync = provider.ProvideFileSynchronizer(_name, "");
+            var sync = provider.ProvideFileSynchronizer(Name, "");
             var diff = new TextDiff(0, 0, "a");
             sync.AddChange(diff);
 
-            Assert.AreEqual("a", File.ReadAllText(_name));
+            Assert.AreEqual("a", File.ReadAllText(Name));
         }
 
         [Test]
         public void DeleteTest()
         {
-            File.WriteAllText(_name, "test");
+            File.WriteAllText(Name, "test");
             var diff = new TextDiff(1, 2, "");
-            var synchronizer = new ConcurrentFileSynchronizer(_name);
+            var synchronizer = new ConcurrentFileSynchronizer(Name);
             synchronizer.AddChange(diff);
 
-            Assert.AreEqual("tst", File.ReadAllText(_name));
+            Assert.AreEqual("tst", File.ReadAllText(Name));
         }
 
         [Test]
         public void ReplaceTest()
         {
-            File.WriteAllText(_name, "test");
+            File.WriteAllText(Name, "test");
             var diff = new TextDiff(1, 2, "a");
-            var synchronizer = new ConcurrentFileSynchronizer(_name);
+            var synchronizer = new ConcurrentFileSynchronizer(Name);
             synchronizer.AddChange(diff);
 
-            Assert.AreEqual("tast", File.ReadAllText(_name));
+            Assert.AreEqual("tast", File.ReadAllText(Name));
         }
     }
 }

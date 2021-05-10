@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DistributedDocs.FileSystem;
 
 namespace DistributedDocs.VersionHistory
 {
@@ -10,15 +9,28 @@ namespace DistributedDocs.VersionHistory
         private readonly object _syncRoot = new object();
         private readonly SortedSet<ICommit<T>> _history = new SortedSet<ICommit<T>>();
         private readonly IAuthorInfo _self;
-        private readonly IConcurrentFileSynchronizer<T> _fileSynchronizer;
+        private readonly ICommitMerger<T> _commitMerger;
 
-        internal ConcurrentVersionHistory(IAuthorInfo self, IConcurrentFileSynchronizer<T> fileSynchronizer)
+        internal ConcurrentVersionHistory(IAuthorInfo self, string name, ICommitMerger<T> commitMerger)
         {
             _self = self;
-            _fileSynchronizer = fileSynchronizer;
+            Name = name;
+            _commitMerger = commitMerger;
+        }
+
+        public ConcurrentVersionHistory(IAuthorInfo self, string name, ICommitMerger<T> commitMerger, Guid historyId, IEnumerable<ICommit<T>> existingCommits)
+            : this(self, name, commitMerger)
+        {
+            Guid = historyId;
+            foreach (var commit in existingCommits)
+            {
+                SaveCommit(commit);
+            }
         }
 
         public Guid Guid { get; } = Guid.NewGuid();
+        public string Name { get; }
+        public IReadOnlyCollection<ICommit<T>> History => _history;
 
         public ICommit<T> CommitChange(T change)
         {
@@ -26,8 +38,7 @@ namespace DistributedDocs.VersionHistory
             {
                 _history.Reverse();
                 var commit = new Commit<T>(_history.LastOrDefault()?.Id ?? 0, _self, change);
-                _history.Add(commit);
-                _fileSynchronizer.AddChange(change);
+                SaveCommit(commit);
                 return commit;
             }
         }
@@ -37,10 +48,15 @@ namespace DistributedDocs.VersionHistory
             lock (_syncRoot)
             {
                 var corrected = ResolveConflicts(commit);
-                _history.Add(corrected);
-                _fileSynchronizer.AddChange(corrected.Change);
+                SaveCommit(corrected);
                 return corrected.Id == commit.Id ? null : corrected;
             }
+        }
+
+        private void SaveCommit(ICommit<T> commit)
+        {
+            _history.Add(commit);
+            _commitMerger.Merge(_history, commit);
         }
 
         private ICommit<T> ResolveConflicts(ICommit<T> commit)

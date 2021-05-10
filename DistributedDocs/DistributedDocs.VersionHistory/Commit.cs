@@ -3,8 +3,9 @@
     public sealed class Commit<T> : ICommit<T>
         where T : notnull
     {
-        internal Commit(int id, IAuthorInfo author, T change)
-        {
+
+	    public Commit(int id, IAuthorInfo author, T change)
+	    {
             Id = id;
             Author = author;
             Change = change;

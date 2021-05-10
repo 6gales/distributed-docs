@@ -3,10 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 	<Nullable>enable</Nullable>
+	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="3.2.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
   </ItemGroup>
@@ -16,6 +18,10 @@
     <ProjectReference Include="..\DistributedDocs.Server.ClientModels\DistributedDocs.Server.ClientModels.csproj" />
     <ProjectReference Include="..\DistributedDocs.Utils\DistributedDocs.Utils.csproj" />
     <ProjectReference Include="..\DistributedDocs.VersionHistory\DistributedDocs.VersionHistory.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 

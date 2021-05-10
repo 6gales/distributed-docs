@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributedDocs.Utils", "Di
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributedDocs.DocumentChanges", "DistributedDocs.DocumentChanges\DistributedDocs.DocumentChanges.csproj", "{131F44BE-B8C7-4AB2-8CA6-1E86CBCEBD7A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedDocs.VersionHistory.Tests", "DistributedDocs.VersionHistory.Tests\DistributedDocs.VersionHistory.Tests.csproj", "{E68D543C-6794-4A76-8C3C-93F932F85EF5}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedDocs.FileSystem.Test", "DistributedDocs.FileSystem.Test\DistributedDocs.FileSystem.Test.csproj", "{D66A2B2E-F62C-43ED-A739-2CA923D0D4A9}"
 EndProject
 Global
@@ -53,6 +55,10 @@ Global
 		{131F44BE-B8C7-4AB2-8CA6-1E86CBCEBD7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{131F44BE-B8C7-4AB2-8CA6-1E86CBCEBD7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{131F44BE-B8C7-4AB2-8CA6-1E86CBCEBD7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E68D543C-6794-4A76-8C3C-93F932F85EF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E68D543C-6794-4A76-8C3C-93F932F85EF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E68D543C-6794-4A76-8C3C-93F932F85EF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E68D543C-6794-4A76-8C3C-93F932F85EF5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D66A2B2E-F62C-43ED-A739-2CA923D0D4A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D66A2B2E-F62C-43ED-A739-2CA923D0D4A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D66A2B2E-F62C-43ED-A739-2CA923D0D4A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
