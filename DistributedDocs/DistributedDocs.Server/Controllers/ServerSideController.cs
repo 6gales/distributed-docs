@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using DistributedDocs.DocumentChanges;
 using DistributedDocs.Server.ClientModels;
 using DistributedDocs.Server.Models.ServerModels;
 using DistributedDocs.Server.Services;
 using DistributedDocs.Server.Users;
-using DistributedDocs.VersionHistory;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DistributedDocs.Server.Controllers
@@ -14,18 +11,12 @@ namespace DistributedDocs.Server.Controllers
 	[Route("/server")]
 	internal sealed class ServerSideController : ControllerBase
 	{
-		private readonly IVersionHistoryProvider<ITextDiff>_versionHistoryProvider;
-		private readonly ServerSideCommunicator _serverSideCommunicator;
 		private readonly DocumentContext _documentContext;
 		private readonly IUserStorage _userStorage;
 
-		public ServerSideController(IVersionHistoryProvider<ITextDiff> versionHistoryProvider,
-			ServerSideCommunicator serverSideCommunicator,
-			DocumentContext documentContext,
+		public ServerSideController(DocumentContext documentContext,
 			IUserStorage userStorage)
 		{
-			_versionHistoryProvider = versionHistoryProvider;
-			_serverSideCommunicator = serverSideCommunicator;
 			_documentContext = documentContext;
 			_userStorage = userStorage;
 		}

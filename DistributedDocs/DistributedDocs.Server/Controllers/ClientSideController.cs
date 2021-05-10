@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,9 +17,9 @@ namespace DistributedDocs.Server.Controllers
 		private readonly DocumentContext _documentContext;
 		private readonly IAuthorInfoEditor _authorInfoEditor;
 
-		private List<ClientCommit> _commitsToSend = new List<ClientCommit>();
-		private object _commitsSyncRoot = new object();
-		private ManualResetEvent _event = new ManualResetEvent(false);
+		private readonly List<ClientCommit> _commitsToSend = new List<ClientCommit>();
+		private readonly object _commitsSyncRoot = new object();
+		private readonly ManualResetEvent _event = new ManualResetEvent(false);
 
 
 		public ClientSideController(ServerSideCommunicator serverSideCommunicator,
