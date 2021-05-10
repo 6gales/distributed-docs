@@ -1,21 +1,24 @@
 @page "/documents"
+@using DistributedDocs.Server.ClientModels
 @inject NavigationManager NavigationManager
+@inject HttpClient Http
 
 <h2>Documents</h2>
 @foreach(var document in _documents)
     {
         <div>
-            <NavLink href="@Data.Documents.Url(_documents.IndexOf(document))"
-                     target="_blank">@document.Name</NavLink>
+            <NavLink href="@DocumentManager.Url(document.DocumentId)"
+                     target="_blank">@document.DocumentName</NavLink>
         </div>
     }
 
 @code {
-    List<Data.Document> _documents;
+    IReadOnlyCollection<DocumentInfo> _documents;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _documents = Data.Documents.GetDocuments();
+        // _documents = Data.Documents.GetDocuments();
+        _documents = await Http.GetFromJsonAsync<DocumentInfo[]>("/client/bind/documents");
     }
 
 }

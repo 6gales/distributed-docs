@@ -1,37 +1,31 @@
-@page "/documents/{Id:int}"
+@page "/documents/{Id:string}"
+@using DistributedDocs.Server.ClientModels
 @inject NavigationManager NavigationManager
 
-<h3>@_document.Name</h3>
+<h3>@_document.DocumentName</h3>
 <textArea
     value="@TextAreaValue" rows="17" cols="110" @oninput="@OnTextChanged" >
 </textArea>
 
-<button @onclick="OnButton">Save file</button>
-
 @code {
     [Parameter]
-    public int Id { get; set; }
+    public string Id { get; set; }
 
-    Data.Document _document;
+    DocumentInfo _document;
 
     private static string TextAreaValue { get; set; } = string.Empty;
 
     protected override void OnParametersSet()
     {
-        _document = Data.Documents.GetDocument(Id);
-        TextAreaValue = _document.Content;
+        _document = DocumentManager.GetDocument(Guid.Parse(Id));
+        // TODO: get content
+        // TextAreaValue = _document.Content;
     }
     
     private void OnTextChanged(ChangeEventArgs args)
     {
         var newValue = args.Value.ToString();
         TextAreaValue = newValue;
-    }
-
-    private void OnButton()
-    {
-        _document.Content = TextAreaValue;
-        Data.Documents.UpdateDocument(_document);
-        NavigationManager.NavigateTo("documents/");
+        //TODO: send commit
     }
 }

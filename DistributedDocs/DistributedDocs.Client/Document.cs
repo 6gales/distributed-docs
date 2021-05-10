@@ -1,51 +1,34 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using DistributedDocs.Server.ClientModels;
 
 namespace DistributedDocs.Client
 {
-    namespace Data
+    public static class DocumentManager
     {
-        public sealed class Document
-        {
-            public string Name { get; set; }
-            public string Path { get; set; }
-            public string Content { get; set; }
-        }
+        private static readonly Dictionary<Guid, DocumentInfo> Documents = new Dictionary<Guid, DocumentInfo>();
 
-        public static class Documents
+        public static IReadOnlyCollection<DocumentInfo> DocumentsInfos => Documents.Values;
+        
+        public static void AddDocument(DocumentInfo document) 
         {
-            private static readonly List<Document> documents = new List<Document>
+            Documents.Add(document.DocumentId, document);
+        }
+        public static DocumentInfo? GetDocument(Guid documentId) 
+        {
+            if (Documents.TryGetValue(documentId, out var info))
             {
-                new Document {Name = "Test", Content = "It is content"}
-            };
-            
-            public static List<Document> GetDocuments() 
-            {
-                return documents;
+                return info;
             }
-            public static void UpdateDocument(Document document)
-            {
-                var id = documents.IndexOf(document);
-                documents[id] = document;
-            }
-            public static int AddDocument(Document document) 
-            {
-                documents.Add(document);
-                return documents.Count - 1;
-            }
-            public static Document? GetDocument(int id) 
-            {
-                Console.Write("ewfewfefg" + id);
-                if (id >= documents.Count || id < 0)
-                {
-                    return null;
-                }
-                return documents[id];//.Find(n => n.Id.Equals(id));
-            }
-            public static string Url(int id)
-            { 
-                return "documents/" + id;
-            }
+            return null;
+        }
+        public static string Url(Guid documentId)
+        { 
+            return "documents/" + Documents
+                .Where(kv => kv.Key == documentId)
+                .Select((kv, i) => i)
+                .FirstOrDefault();
         }
     }
 }

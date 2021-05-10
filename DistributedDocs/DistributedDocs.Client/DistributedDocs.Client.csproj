@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DistributedDocs.DocumentChanges\DistributedDocs.DocumentChanges.csproj" />
+    <ProjectReference Include="..\DistributedDocs.Server.ClientModels\DistributedDocs.Server.ClientModels.csproj" />
   </ItemGroup>
 
 </Project>

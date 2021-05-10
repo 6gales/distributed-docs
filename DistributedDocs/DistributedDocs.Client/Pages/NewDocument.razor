@@ -20,9 +20,8 @@
 <button @onclick="OnButton">Create</button>
 
 @code {
-    public string FileName { get; set; } = string.Empty;
-    public string FilePath { get; set; } = string.Empty;
-    private int _id;
+    private string FileName { get; set; } = string.Empty;
+    private string FilePath { get; set; } = string.Empty;
 
     private void OnNameChanged(ChangeEventArgs args)
     {
@@ -38,11 +37,7 @@
     
     private void OnButton()
     {
-       _id = Data.Documents.AddDocument(new Data.Document
-       {
-           Name = FileName,
-           Path = FilePath
-       });
-        NavigationManager.NavigateTo("documents/" + _id);
+        //TODO: send create doc request and get response
+        //NavigationManager.NavigateTo("documents");
     }
 }
