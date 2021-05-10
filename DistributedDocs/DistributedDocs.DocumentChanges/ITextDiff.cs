@@ -9,5 +9,7 @@
         int EndIndex { get; }
 
         string Text { get; }
+
+        (int, int, string) Deconstruct();
     }
 }
