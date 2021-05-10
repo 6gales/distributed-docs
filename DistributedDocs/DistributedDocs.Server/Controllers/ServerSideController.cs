@@ -32,7 +32,7 @@ namespace DistributedDocs.Server.Controllers
 
 		[Route("commit")]
 		[HttpPost]
-		public async Task<Response<EmptyResponseBody>> AddCommit([FromBody] ServerCommit serverCommit)
+		public Response<EmptyResponseBody> AddCommit([FromBody] ServerCommit serverCommit)
 		{
 			if (serverCommit.Commit == null)
 			{
@@ -45,7 +45,7 @@ namespace DistributedDocs.Server.Controllers
 				};
 			}
 
-			await _documentContext.EditDocument(serverCommit.Commit.DocumentId, serverCommit);
+			_documentContext.EditDocument(serverCommit.Commit.DocumentId, serverCommit);
 
 			return new Response<EmptyResponseBody>();
 		}

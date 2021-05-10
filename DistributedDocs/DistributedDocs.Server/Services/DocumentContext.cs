@@ -6,6 +6,7 @@ using DistributedDocs.DocumentChanges;
 using DistributedDocs.Server.ClientModels;
 using DistributedDocs.Server.Models.ServerModels;
 using DistributedDocs.VersionHistory;
+using DistributedDocs.Server.Extensions;
 
 namespace DistributedDocs.Server.Services
 {
@@ -45,17 +46,16 @@ namespace DistributedDocs.Server.Services
 			return versionHistory;
 		}
 
-		public IConcurrentVersionHistory<ITextDiff> CreateNew(Guid documentGuid, 
+		public IConcurrentVersionHistory<ITextDiff> CreateNew(Guid documentId, 
 			string documentName, 
 			IReadOnlyCollection<ServerCommit> history)
 		{
-			// TODO: use new functional
+			var versionHistory = _versionHistoryProvider.FromExisting(documentId, documentName, 
+				history.Select(c => c.ToHistoryCommit()));
 
-			//var versionHistory = _versionHistoryProvider.ProvideHistory(name, path);
+			_documents.Add(versionHistory.Guid, versionHistory);
 
-			//_documents.Add(versionHistory.Guid, versionHistory);
-
-			return null;
+			return versionHistory;
 		}
 
 		public async Task EditDocument(Guid documentId, ClientCommit commit)
@@ -74,31 +74,20 @@ namespace DistributedDocs.Server.Services
 				Commit = commit,
 				CommitId = localCommit.Id,
 				UserGuid = _authorInfoEditor.Guid,
+				UserName = _authorInfoEditor.Name,
 			};
 
 			await _serverSideCommunicator.SendCommitToGroup(serverCommit);
 		}
 
-		public async Task EditDocument(Guid documentId, ServerCommit commit)
+		public void EditDocument(Guid documentId, ServerCommit commit)
 		{
 			if (!_documents.TryGetValue(documentId, out var versionHistory))
 			{
 				return;
 			}
 
-			if (commit.Commit != null)
-			{
-				var diff = new TextDiff(commit.Commit.BeginIndex, 
-					commit.Commit.EndIndex, commit.Commit.String);
-
-				var newCommit = new Commit<ITextDiff>(commit.CommitId, 
-					new AuthorInfo(commit.UserGuid, string.Empty), diff);
-
-				versionHistory.AddCommit(newCommit);
-
-				// send to client somehow
-				await _serverSideCommunicator.SendCommitToGroup(commit);
-			}
+			versionHistory.AddCommit(commit.ToHistoryCommit());
 
 			OnCommit?.Invoke(commit);
 		}
@@ -110,10 +99,8 @@ namespace DistributedDocs.Server.Services
 				return new List<ServerCommit>();
 			}
 
-			// TODO: get history from version
-			// version.
-
-			return new List<ServerCommit>();
+			return version.History
+				.Select(c => c.FromHistoryCommit(documentId)).ToList();
 		}
 
 		public IReadOnlyCollection<DocumentInfo> GetDocuments()
@@ -123,8 +110,7 @@ namespace DistributedDocs.Server.Services
 					d => new DocumentInfo
 					{
 						DocumentId = d.Key,
-						// TODO: concurrent version should provide filename
-						DocumentName = "bl",
+						DocumentName = d.Value.Name,
 					})
 				.ToList();
 
@@ -138,8 +124,7 @@ namespace DistributedDocs.Server.Services
 					d => new DocumentInfo
 					{
 						DocumentId = d.Key,
-						// TODO: concurrent version should provide filename
-						DocumentName = "bl",
+						DocumentName = d.Value.Name,
 					})
 				.Concat(_remoteDocuments
 					.Select(d => d.Value)
@@ -157,9 +142,8 @@ namespace DistributedDocs.Server.Services
 		public string GetDocumentName(Guid documentGuid)
 		{
 			if (_documents.TryGetValue(documentGuid, out var history))
-			{
-				// TODO: add get name
-				return history.Guid.ToString();
+			{ 
+				return history.Name;
 			}
 
 			if (_remoteDocuments.TryGetValue(documentGuid, out var docInfo))

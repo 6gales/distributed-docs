@@ -116,7 +116,6 @@ namespace DistributedDocs.Server.Controllers
 		[HttpGet]
 		public Response<IReadOnlyCollection<DocumentInfo>> GetDocuments()
 		{
-			// TODO: get data from another source
 			var documentInfos = _documentContext.GetAllDocuments();
 			return new Response<IReadOnlyCollection<DocumentInfo>>
 			{

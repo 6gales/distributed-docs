@@ -48,6 +48,13 @@ namespace DistributedDocs.Server.ConnectReceiver
 						{
 							foreach (var messageDocumentInfo in message.DocumentInfos)
 							{
+								_documentContext.AddRemoteDocument(messageDocumentInfo.Key.DocumentId,
+									messageDocumentInfo.Key);
+
+								foreach (var user in messageDocumentInfo.Value)
+								{
+									_userStorage.AddUser(messageDocumentInfo.Key.DocumentId, user);
+								}
 
 							}
 						}
