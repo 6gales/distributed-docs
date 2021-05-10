@@ -1,4 +1,6 @@
-﻿using DistributedDocs.DocumentChanges;
+using System.Text;
+using System.IO;
+using DistributedDocs.DocumentChanges;
 
 namespace DistributedDocs.FileSystem
 {
@@ -6,7 +8,13 @@ namespace DistributedDocs.FileSystem
     {
         public IConcurrentFileSynchronizer<ITextDiff> ProvideFileSynchronizer(string name, string? path)
         {
-            throw new System.NotImplementedException();
+            path = !string.IsNullOrWhiteSpace(path) ? $"{path}//{name}" : name;
+            if (!File.Exists(path))
+            {
+                using var stream = File.Create(path);
+            }
+            
+            return new ConcurrentFileSynchronizer(path);
         }
     }
 }
