@@ -1,3 +1,9 @@
+using DistributedDocs.DocumentChanges;
+using DistributedDocs.Server.ConnectReceivers;
+using DistributedDocs.Server.ConnectSenders;
+using DistributedDocs.Server.Services;
+using DistributedDocs.Server.Users;
+using DistributedDocs.VersionHistory;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +28,18 @@ namespace DistributedDocs.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            //        private readonly ServerSideCommunicator _serverSideCommunicator;
+            services.AddSingleton<IUserStorage, UserStorage>();
+
+            services.AddSingleton<ServerSideCommunicator, ServerSideCommunicator>();
+            services.AddSingleton<IVersionHistoryProvider<ITextDiff>, VersionHistoryProvider>();
+            services.AddSingleton<IAuthorInfoEditor, AuthorInfoEditor>();
+
+			services.AddSingleton<DocumentContext, DocumentContext>();
+
+			services.AddSingleton<ConnectSender>();
+			services.AddSingleton<ConnectReceiver>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -7,7 +7,7 @@ using DistributedDocs.Server.Services;
 using DistributedDocs.Server.Users;
 using DistributedDocs.Utils;
 
-namespace DistributedDocs.Server.ConnectReceiver
+namespace DistributedDocs.Server.ConnectReceivers
 {
 	internal sealed class ConnectReceiver : Disposable
 	{
