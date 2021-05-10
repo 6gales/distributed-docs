@@ -1,5 +1,7 @@
 @page "/new"
+@using DistributedDocs.Server.ClientModels
 @inject NavigationManager NavigationManager
+@inject HttpClient Http
 
 <h3>Create new document</h3>
 
@@ -35,9 +37,15 @@
         FilePath = newValue;
     }
     
-    private void OnButton()
+    private async Task OnButton()
     {
-        //TODO: send create doc request and get response
-        //NavigationManager.NavigateTo("documents");
+        var documentId = await Http.PostAsJsonAsync("/client/document", 
+        new DocumentCreateRequest
+        {
+            DocumentName = FileName,
+            Path = FilePath
+        });
+
+        NavigationManager.NavigateTo("/documents/" + documentId);
     }
 }

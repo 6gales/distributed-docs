@@ -19,5 +19,4 @@
         UserName = newValue;
         await Http.PostAsJsonAsync("/client/user", new ChangeNameRequest {NewName = UserName});
     }
-
 }

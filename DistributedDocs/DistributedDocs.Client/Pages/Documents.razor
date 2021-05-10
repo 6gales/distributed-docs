@@ -8,8 +8,9 @@
     {
         <div>
             <NavLink href="@DocumentManager.Url(document.DocumentId)"
+                     @oninput="@OnLinkClick"
                      target="_blank">@document.DocumentName
-                  </NavLink>
+            </NavLink>
         </div>
     }
 
@@ -18,8 +19,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _documents = DocumentManager.DocumentsInfos;
-        //_documents = await Http.GetFromJsonAsync<DocumentInfo[]>("/client/bind/documents");
+       // _documents = DocumentManager.DocumentsInfos;
+        _documents = await Http.GetFromJsonAsync<DocumentInfo[]>("/client/documents");
     }
-
+    private async Task OnLinkClick(ChangeEventArgs args)
+    {
+        var newValue = args.Value.ToString();
+        await Http.PostAsJsonAsync("/client/connect", new DocumentConnectRequest
+        {
+            DocumentId = _documents.First(n => n.DocumentName == newValue).DocumentId
+        });
+    }
 }
