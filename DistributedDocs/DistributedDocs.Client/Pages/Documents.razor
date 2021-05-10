@@ -1,7 +1,7 @@
 @page "/documents"
 @inject NavigationManager NavigationManager
 
-<h1>Documents</h1>
+<h2>Documents</h2>
 @foreach(var document in _documents)
     {
         <div>
@@ -12,14 +12,10 @@
 
 @code {
     List<Data.Document> _documents;
-    
+
     protected override void OnInitialized()
     {
         _documents = Data.Documents.GetDocuments();
     }
-    
-    private void OnButton()
-    {
-        _documents = Data.Documents.GetDocuments();
-    }
+
 }

@@ -3,10 +3,19 @@
 
 <h3>Create new document</h3>
 
-<input placeholder="Enter file name"
-       value="@FileName"/>
-<input placeholder="Enter file path"
-       value="@FilePath"/>
+<p>
+    <label>
+        Normal Blazor binding:
+        <input @bind="FileName" />
+    </label>
+</p>
+
+<div>
+    <input value="@FileName" placeholder="Enter file name" @oninput="@OnNameChanged"/>
+</div>
+<div>
+<input value="@FilePath" placeholder="Enter file path" @oninput="@OnPathChanged"/>
+</div>
 
 <button @onclick="OnButton">Create</button>
 
@@ -14,6 +23,18 @@
     public string FileName { get; set; } = string.Empty;
     public string FilePath { get; set; } = string.Empty;
     private int _id;
+
+    private void OnNameChanged(ChangeEventArgs args)
+    {
+        var newValue = args.Value.ToString();
+        FileName = newValue;
+    }
+
+    private void OnPathChanged(ChangeEventArgs args)
+    {
+        var newValue = args.Value.ToString();
+        FilePath = newValue;
+    }
     
     private void OnButton()
     {

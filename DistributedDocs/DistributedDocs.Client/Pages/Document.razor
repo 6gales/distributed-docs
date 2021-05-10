@@ -2,13 +2,6 @@
 @inject NavigationManager NavigationManager
 
 <h3>@_document.Name</h3>
-@* <p> *@
-@*     <label> *@
-@*         Normal Blazor binding: *@
-@*         <input @bind="TextAreaValue" /> *@
-@*     </label> *@
-@* </p> *@
-
 <textArea
     value="@TextAreaValue" rows="17" cols="110" @oninput="@OnTextChanged" >
 </textArea>
