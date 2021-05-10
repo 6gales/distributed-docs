@@ -1,4 +1,5 @@
 using DistributedDocs.DocumentChanges;
+using DistributedDocs.FileSystem;
 using DistributedDocs.Server.ConnectReceivers;
 using DistributedDocs.Server.ConnectSenders;
 using DistributedDocs.Server.Services;
@@ -33,10 +34,14 @@ namespace DistributedDocs.Server
             services.AddSingleton<IUserStorage, UserStorage>();
 
             services.AddSingleton<ServerSideCommunicator, ServerSideCommunicator>();
+            services.AddSingleton<IFileSynchronizerProvider<ITextDiff>, FileSynchronizerProvider>();
             services.AddSingleton<IVersionHistoryProvider<ITextDiff>, VersionHistoryProvider>();
-            services.AddSingleton<IAuthorInfoEditor, AuthorInfoEditor>();
 
-			services.AddSingleton<DocumentContext, DocumentContext>();
+            var authorInfoEditor = new AuthorInfoEditor();
+            services.AddSingleton<IAuthorInfoEditor>(authorInfoEditor);
+            services.AddSingleton<IAuthorProvider>(authorInfoEditor);
+
+            services.AddSingleton<DocumentContext, DocumentContext>();
 
 			services.AddSingleton<ConnectSender>();
 			services.AddSingleton<ConnectReceiver>();

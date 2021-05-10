@@ -1,6 +1,6 @@
-﻿namespace DistributedDocs.FileSystem
+namespace DistributedDocs.FileSystem
 {
-    public interface IConcurrentFileSynchronizer<in T> where T : notnull
+    public interface IConcurrentFileSynchronizer<in T>  where T : notnull
     {
         void AddChange(T change);
     }
