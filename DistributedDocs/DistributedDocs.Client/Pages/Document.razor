@@ -1,4 +1,4 @@
-@page "/documents/{Id:string}"
+@page "/documents/{Id}"
 @using DistributedDocs.Server.ClientModels
 @inject NavigationManager NavigationManager
 
@@ -8,10 +8,11 @@
 </textArea>
 
 @code {
-    [Parameter]
-    public string Id { get; set; }
 
-    DocumentInfo _document;
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    private DocumentInfo _document;
 
     private static string TextAreaValue { get; set; } = string.Empty;
 

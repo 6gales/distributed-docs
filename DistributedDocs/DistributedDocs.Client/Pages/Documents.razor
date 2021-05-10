@@ -17,8 +17,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // _documents = Data.Documents.GetDocuments();
-        _documents = await Http.GetFromJsonAsync<DocumentInfo[]>("/client/bind/documents");
+        _documents = DocumentManager.DocumentsInfos;
+        //_documents = await Http.GetFromJsonAsync<DocumentInfo[]>("/client/bind/documents");
     }
 
 }
