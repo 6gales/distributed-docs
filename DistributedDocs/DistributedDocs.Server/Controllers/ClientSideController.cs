@@ -88,15 +88,21 @@ namespace DistributedDocs.Server.Controllers
 		{
 			if (_documentContext.DocumentExists(connectRequest.DocumentId))
 			{
+				_documentContext.LoadHistory(connectRequest.DocumentId);
 				return new Response<EmptyResponseBody>();
+
 			}
 
 			// TODO: check errors
 			await _serverSideCommunicator
 				.ConnectToDocument(connectRequest.DocumentId, _authorInfoEditor.Guid);
 
+			var history = await _serverSideCommunicator.GetHistory(connectRequest.DocumentId);
+			_documentContext.CreateNew(connectRequest.DocumentId, 
+				_documentContext.GetDocumentName(connectRequest.DocumentId), 
+				history);
 
-			_documentContext.CreateNew(_documentContext.GetDocumentName(connectRequest.DocumentId), null);
+			_documentContext.LoadHistory(connectRequest.DocumentId);
 
 			return new Response<EmptyResponseBody>();
 		}

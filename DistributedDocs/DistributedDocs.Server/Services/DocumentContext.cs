@@ -96,7 +96,7 @@ namespace DistributedDocs.Server.Services
 		{
 			if (!_documents.TryGetValue(documentId, out var version))
 			{
-				return new List<ServerCommit>();
+				throw new ArgumentException($"No such document with id : {documentId}");
 			}
 
 			return version.History
@@ -157,6 +157,22 @@ namespace DistributedDocs.Server.Services
 		public void AddRemoteDocument(Guid documentId, DocumentInfo documentInfo)
 		{
 			_remoteDocuments.Add(documentId, documentInfo);
+		}
+
+		public void LoadHistory(Guid documentId)
+		{
+			if (!_documents.TryGetValue(documentId, out var history))
+			{
+				return;
+			}
+
+			var commits = history.History
+				.Select(c => c.FromHistoryCommit(documentId));
+
+			foreach (var commit in commits)
+			{
+				OnCommit?.Invoke(commit);
+			}
 		}
 	}
 }

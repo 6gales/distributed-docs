@@ -46,11 +46,25 @@ namespace DistributedDocs.Server.Controllers
 		[HttpGet]
 		public Response<IReadOnlyCollection<ServerCommit>> GetHistory([FromQuery] Guid documentId)
 		{
-			var history = _documentContext.GetHistory(documentId);
-			return new Response<IReadOnlyCollection<ServerCommit>>
+			try
 			{
-				ResponseBody = history,
-			};
+				var history = _documentContext.GetHistory(documentId);
+				return new Response<IReadOnlyCollection<ServerCommit>>
+				{
+					ResponseBody = history,
+				};
+			}
+			catch (ArgumentException e)
+			{
+				return new Response<IReadOnlyCollection<ServerCommit>>
+				{
+					ErrorCode = 155,
+					ErrorString = e.Message,
+					ResponseBody = null
+				};
+			}
+
+
 		}
 
 		[Route("connect")]
@@ -68,7 +82,11 @@ namespace DistributedDocs.Server.Controllers
 				};
 			}
 
-			_userStorage.AddUser(userConnectRequest.DocumentId, userConnectRequest.User);
+			var user = userConnectRequest.User;
+			user.Host = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+			user.Port = Request.HttpContext.Connection.RemotePort;
+
+			_userStorage.AddUser(userConnectRequest.DocumentId, user);
 
 			return GetUsers(userConnectRequest.DocumentId);
 		}
@@ -77,11 +95,12 @@ namespace DistributedDocs.Server.Controllers
 		[HttpGet]
 		public Response<IReadOnlyCollection<IUser>> GetUsers([FromQuery]Guid documentId)
 		{
+			var users = _userStorage.GetUserList(documentId);
 			return new Response<IReadOnlyCollection<IUser>>
 			{
 				ErrorCode = 0,
 				ErrorString = string.Empty,
-				ResponseBody = _userStorage.GetUserList(documentId),
+				ResponseBody = users,
 
 			};
 		}
