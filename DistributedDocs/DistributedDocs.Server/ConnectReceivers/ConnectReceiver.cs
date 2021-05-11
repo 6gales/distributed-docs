@@ -17,7 +17,7 @@ namespace DistributedDocs.Server.ConnectReceivers
 		private readonly IUserStorage _userStorage;
 		private readonly ILogger<ConnectReceiver> _logger;
 
-		private const int Port = 5554;
+		private const int Port = 5555;
 		private readonly IPAddress _group = IPAddress.Parse("224.0.0.155");
 		private readonly UdpClient _udpReceiver;
 
