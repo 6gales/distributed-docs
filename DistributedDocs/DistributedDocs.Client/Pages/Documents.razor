@@ -6,13 +6,9 @@
 <h2>Documents</h2>
 @foreach (var document in _documents)
 {
-    <div>
-        <NavLink href="@DocumentManager.Url(document.DocumentId)"
-                 @oninput="@OnLinkClick"
-                 target="_blank">
-            @document.DocumentName
-        </NavLink>
-    </div>
+<div style="padding:10px">
+    <button @onclick="() => OnButton(document)" style="height:40px;width:200px">@document.DocumentName</button>
+</div>
 }
 
 @code {
@@ -25,13 +21,14 @@
         DocumentManager.StoreDocuments(_documents);
     }
 
-    private async Task OnLinkClick(ChangeEventArgs args)
+    private async Task OnButton(DocumentInfo info)
     {
-        var newValue = args.Value.ToString();
-        await Http.PostAsJsonAsync("/client/connect", new DocumentConnectRequest
+       
+        await Http.PostAsJsonAsync("client/connect", new DocumentConnectRequest
         {
-            DocumentId = _documents.First(n => n.DocumentName == newValue).DocumentId
+            DocumentId = _documents.First(n => n.DocumentName == info.DocumentName).DocumentId
         });
+          NavigationManager.NavigateTo($"/documents/{info.DocumentId}");
     }
 
 }
