@@ -53,27 +53,17 @@ namespace DistributedDocs.Server
 			services.AddSingleton<ConnectSender>();
 			services.AddSingleton<ConnectReceiver>();
 
+
+
 			services.AddSwaggerGen(c =>
 			{
-				c.SwaggerDoc("v1", new OpenApiInfo
-				{
-					Version = "v1",
-					Title = "ToDo API",
-					Description = "A simple example ASP.NET Core Web API",
-					TermsOfService = new Uri("https://example.com/terms"),
-					Contact = new OpenApiContact
+				c.SwaggerDoc("v1", 
+					new OpenApiInfo
 					{
-						Name = "Shayne Boyer",
-						Email = string.Empty,
-						Url = new Uri("https://twitter.com/spboyer"),
-					},
-					License = new OpenApiLicense
-					{
-						Name = "Use under LICX",
-						Url = new Uri("https://example.com/license"),
-					}
-				});
-			});
+						Title = "Payment Card Info API", 
+						Version = "v1"
+					});
+            });
 
 			
         }
@@ -91,7 +81,21 @@ namespace DistributedDocs.Server
                 app.UseExceptionHandler("/Error");
             }
 
+            //app.UseSwagger(c =>
+            //{
+	           // c.SerializeAsV2 = true;
+            //});
 
+            //app.UseSwaggerUI(c =>
+            //{
+	           // c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            //});
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+	            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Distributed docs API");
+            });
 
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
@@ -107,12 +111,9 @@ namespace DistributedDocs.Server
                 endpoints.MapFallbackToFile("index.html");
             });
 
-            app.UseSwagger();
+            //app.UseSwagger();
 
-            app.UseSwaggerUI(c =>
-            {
-	            c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            });
+
 
 
             app.ApplicationServices.GetService<ConnectSender>();
