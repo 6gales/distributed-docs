@@ -50,8 +50,9 @@
         var responseStr = await response.Content.ReadAsStringAsync();
 
         var data = JsonConvert.DeserializeObject<Response<DocumentCreateResponse>>(responseStr);
-
-        NavigationManager.NavigateTo("/documents/" + data.ResponseBody.DocumentGuid);
+        var documentId = data.ResponseBody.DocumentGuid;
+        DocumentManager.AddDocument(new DocumentInfo {DocumentId = documentId, DocumentName = FileName});
+        NavigationManager.NavigateTo($"/documents/{documentId}");
     }
 
 }

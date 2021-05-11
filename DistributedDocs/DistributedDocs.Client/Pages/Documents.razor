@@ -16,13 +16,13 @@
 }
 
 @code {
-    IReadOnlyCollection<DocumentInfo> _documents;
+    IReadOnlyCollection<DocumentInfo> _documents = Array.Empty<DocumentInfo>();
 
     protected override async Task OnInitializedAsync()
     {
-    // _documents = DocumentManager.DocumentsInfos;
         var documentResponse = await Http.GetFromJsonAsync<Response<IReadOnlyCollection<DocumentInfo>>>("client/documents");
         _documents = documentResponse?.ResponseBody ?? Array.Empty<DocumentInfo>();
+        DocumentManager.StoreDocuments(_documents);
     }
 
     private async Task OnLinkClick(ChangeEventArgs args)
