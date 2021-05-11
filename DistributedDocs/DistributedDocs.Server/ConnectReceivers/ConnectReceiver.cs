@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -6,6 +7,7 @@ using DistributedDocs.Server.Models;
 using DistributedDocs.Server.Services;
 using DistributedDocs.Server.Users;
 using DistributedDocs.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace DistributedDocs.Server.ConnectReceivers
 {
@@ -13,6 +15,7 @@ namespace DistributedDocs.Server.ConnectReceivers
 	{
 		private readonly DocumentContext _documentContext;
 		private readonly IUserStorage _userStorage;
+		private readonly ILogger<ConnectReceiver> _logger;
 
 		private const int Port = 5554;
 		private readonly IPAddress _group = IPAddress.Parse("224.0.0.155");
@@ -20,10 +23,13 @@ namespace DistributedDocs.Server.ConnectReceivers
 
 		private readonly Thread _thread;
 
-		public ConnectReceiver(DocumentContext documentContext, IUserStorage userStorage)
+		public ConnectReceiver(DocumentContext documentContext,
+			IUserStorage userStorage,
+			ILogger<ConnectReceiver> logger)
 		{
 			_documentContext = documentContext;
 			_userStorage = userStorage;
+			_logger = logger;
 			_udpReceiver = new UdpClient(Port);
 			_udpReceiver.JoinMulticastGroup(_group);
 
@@ -50,6 +56,9 @@ namespace DistributedDocs.Server.ConnectReceivers
 						}
 
 					}
+					_logger.Log(LogLevel.Information, 
+						string.Join(" ", message.DocumentInfos.Keys.Select(a => 
+							$"[docId: {a.DocumentId} | docName:{a.DocumentName}]")));
 				}
 			}
 			catch (ArgumentException)
