@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -20,12 +21,20 @@ namespace DistributedDocs.Server.ConnectSenders
 		private readonly UdpClient _udpSender;
 		private const int Port = 5555;
 		private readonly IPAddress _group = IPAddress.Parse("224.0.0.155");
+		private readonly IPEndPoint _localEp = new IPEndPoint(IPAddress.Any, Port);
+		private readonly IPEndPoint _groupEndPoint;
 
 		public ConnectSender(IUserStorage userStorage, DocumentContext documentContext)
 		{
 			_userStorage = userStorage;
 			_documentContext = documentContext;
-			_udpSender = new UdpClient(Port);
+
+
+			_groupEndPoint = new IPEndPoint(_group, Port);
+			_udpSender = new UdpClient();
+			_udpSender.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress,
+				true);
+			_udpSender.Client.Bind(_localEp);
 			_udpSender.JoinMulticastGroup(_group);
 
 			_timer = new Timer(Send, null, 0, 60 * 1000);
@@ -46,19 +55,28 @@ namespace DistributedDocs.Server.ConnectSenders
 			return documentsInfoPackage;
 		}
 
-		private byte[] CreateSendMessage()
+		private bool CreateSendMessage(out byte[] messageBytes)
 		{
 			var message = CreateMessage();
+			if (!message.DocumentInfos.Any())
+			{
+				messageBytes = Array.Empty<byte>();
+				return false;
+			}
 
-			return message.Serialize();
+			messageBytes = message.Serialize();
+			return true;
 		}
 
 		private void Send(object? state)
 		{
 			try
 			{
-				var message = CreateSendMessage();
-				_udpSender.SendAsync(message, message.Length);
+				if (CreateSendMessage(out var message))
+				{
+					_udpSender.SendAsync(message, message.Length, _groupEndPoint);
+				}
+
 			}
 			catch (ThreadAbortException)
 			{

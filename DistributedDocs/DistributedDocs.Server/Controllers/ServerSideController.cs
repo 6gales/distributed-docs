@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DistributedDocs.Server.Controllers
 {
-    [ApiController]
+	[ApiController]
     [Route("server")]
-	public sealed class ServerSideController : ControllerBase
+    public sealed class ServerSideController : ControllerBase
 	{
 		private readonly DocumentContext _documentContext;
 		private readonly IUserStorage _userStorage;
@@ -44,13 +44,27 @@ namespace DistributedDocs.Server.Controllers
 
 		[Route("history")]
 		[HttpGet]
-		public Response<IReadOnlyCollection<ServerCommit>> GetHistory([FromQuery] Guid documentGuid)
+		public Response<IReadOnlyCollection<ServerCommit>> GetHistory([FromQuery] Guid documentId)
 		{
-			var history = _documentContext.GetHistory(documentGuid);
-			return new Response<IReadOnlyCollection<ServerCommit>>
+			try
 			{
-				ResponseBody = history,
-			};
+				var history = _documentContext.GetHistory(documentId);
+				return new Response<IReadOnlyCollection<ServerCommit>>
+				{
+					ResponseBody = history,
+				};
+			}
+			catch (ArgumentException e)
+			{
+				return new Response<IReadOnlyCollection<ServerCommit>>
+				{
+					ErrorCode = 155,
+					ErrorString = e.Message,
+					ResponseBody = null
+				};
+			}
+
+
 		}
 
 		[Route("connect")]
@@ -68,7 +82,12 @@ namespace DistributedDocs.Server.Controllers
 				};
 			}
 
-			_userStorage.AddUser(userConnectRequest.DocumentId, userConnectRequest.User);
+			var user = userConnectRequest.User;
+			user.Host = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+			// TODO: use port form request
+			//user.Port = Request.HttpContext.Connection.RemotePort;
+
+			_userStorage.AddUser(userConnectRequest.DocumentId, user);
 
 			return GetUsers(userConnectRequest.DocumentId);
 		}
@@ -77,11 +96,12 @@ namespace DistributedDocs.Server.Controllers
 		[HttpGet]
 		public Response<IReadOnlyCollection<IUser>> GetUsers([FromQuery]Guid documentId)
 		{
+			var users = _userStorage.GetUserList(documentId);
 			return new Response<IReadOnlyCollection<IUser>>
 			{
 				ErrorCode = 0,
 				ErrorString = string.Empty,
-				ResponseBody = _userStorage.GetUserList(documentId),
+				ResponseBody = users,
 
 			};
 		}

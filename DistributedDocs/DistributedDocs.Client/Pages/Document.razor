@@ -48,7 +48,7 @@
     {
         try
         {
-            var response = await Http.GetFromJsonAsync<Response<IReadOnlyCollection<ClientCommit>>>("client/bind/commit");
+            var response = await Http.GetFromJsonAsync<Response<IReadOnlyCollection<ClientCommit>>>("client/bind/commits");
             var commits = response.ResponseBody ?? Array.Empty<ClientCommit>();
             foreach (var clientCommit in commits)
             {
