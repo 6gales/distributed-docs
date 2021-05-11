@@ -84,7 +84,8 @@ namespace DistributedDocs.Server.Controllers
 
 			var user = userConnectRequest.User;
 			user.Host = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-			user.Port = Request.HttpContext.Connection.RemotePort;
+			// TODO: use port form request
+			//user.Port = Request.HttpContext.Connection.RemotePort;
 
 			_userStorage.AddUser(userConnectRequest.DocumentId, user);
 

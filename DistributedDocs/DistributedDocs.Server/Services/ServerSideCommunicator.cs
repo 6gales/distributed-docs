@@ -104,6 +104,9 @@ namespace DistributedDocs.Server.Services
 				{
 					UserGuid = _authorInfoEditor.Guid,
 					UserName = _authorInfoEditor.Name ?? string.Empty,
+					Host = "",
+					// TODO: edit port
+					Port = 5000,
 				},
 			};
 
