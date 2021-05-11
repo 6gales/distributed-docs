@@ -4,24 +4,27 @@
 @inject HttpClient Http
 
 <h2>Documents</h2>
-@foreach(var document in _documents)
-    {
-        <div>
-            <NavLink href="@DocumentManager.Url(document.DocumentId)"
-                     @oninput="@OnLinkClick"
-                     target="_blank">@document.DocumentName
-            </NavLink>
-        </div>
-    }
+@foreach (var document in _documents)
+{
+    <div>
+        <NavLink href="@DocumentManager.Url(document.DocumentId)"
+                 @oninput="@OnLinkClick"
+                 target="_blank">
+            @document.DocumentName
+        </NavLink>
+    </div>
+}
 
 @code {
     IReadOnlyCollection<DocumentInfo> _documents;
 
     protected override async Task OnInitializedAsync()
     {
-       // _documents = DocumentManager.DocumentsInfos;
-        _documents = await Http.GetFromJsonAsync<DocumentInfo[]>("/client/documents");
+    // _documents = DocumentManager.DocumentsInfos;
+        var documentResponse = await Http.GetFromJsonAsync<Response<IReadOnlyCollection<DocumentInfo>>>("client/documents");
+        _documents = documentResponse?.ResponseBody ?? Array.Empty<DocumentInfo>();
     }
+
     private async Task OnLinkClick(ChangeEventArgs args)
     {
         var newValue = args.Value.ToString();
@@ -30,4 +33,5 @@
             DocumentId = _documents.First(n => n.DocumentName == newValue).DocumentId
         });
     }
+
 }

@@ -3,7 +3,7 @@ using DistributedDocs.Server.ClientModels;
 
 namespace DistributedDocs.Server.Models.ServerModels
 {
-	internal sealed class ServerCommit
+	public sealed class ServerCommit
 	{
 		public Guid UserGuid { get; set; }
 		public string? UserName { get; set; }

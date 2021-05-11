@@ -1,5 +1,6 @@
 @page "/new"
 @using DistributedDocs.Server.ClientModels
+@using Newtonsoft.Json
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 
@@ -8,7 +9,7 @@
 <p>
     <label>
         Normal Blazor binding:
-        <input @bind="FileName" />
+        <input @bind="FileName"/>
     </label>
 </p>
 
@@ -16,7 +17,7 @@
     <input value="@FileName" placeholder="Enter file name" @oninput="@OnNameChanged"/>
 </div>
 <div>
-<input value="@FilePath" placeholder="Enter file path" @oninput="@OnPathChanged"/>
+    <input value="@FilePath" placeholder="Enter file path" @oninput="@OnPathChanged"/>
 </div>
 
 <button @onclick="OnButton">Create</button>
@@ -36,16 +37,21 @@
         var newValue = args.Value.ToString();
         FilePath = newValue;
     }
-    
+
     private async Task OnButton()
     {
-        var documentId = await Http.PostAsJsonAsync("/client/document", 
-        new DocumentCreateRequest
-        {
-            DocumentName = FileName,
-            Path = FilePath
-        });
+        var response = await Http.PostAsJsonAsync("/client/document",
+            new DocumentCreateRequest
+            {
+                DocumentName = FileName,
+                Path = FilePath
+            });
 
-        NavigationManager.NavigateTo("/documents/" + documentId);
+        var responseStr = await response.Content.ReadAsStringAsync();
+
+        var data = JsonConvert.DeserializeObject<Response<DocumentCreateResponse>>(responseStr);
+
+        NavigationManager.NavigateTo("/documents/" + data.ResponseBody.DocumentGuid);
     }
+
 }

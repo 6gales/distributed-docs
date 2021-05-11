@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace DistributedDocs.Server.Services
 {
-	internal sealed class ServerSideCommunicator
+	public sealed class ServerSideCommunicator
 	{
 		private readonly HttpClient _httpClient = new HttpClient();
 		private readonly IUserStorage _userStorage;

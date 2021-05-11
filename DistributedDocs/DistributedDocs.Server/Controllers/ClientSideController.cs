@@ -10,8 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DistributedDocs.Server.Controllers
 {
-	[Route("/client")]
-	internal sealed class ClientSideController : ControllerBase
+    [ApiController]
+	[Route("client")]
+	public sealed class ClientSideController : ControllerBase
 	{
 		private readonly ServerSideCommunicator _serverSideCommunicator;
 		private readonly DocumentContext _documentContext;
@@ -21,7 +22,6 @@ namespace DistributedDocs.Server.Controllers
 		private readonly object _commitsSyncRoot = new object();
 		private readonly ManualResetEvent _event = new ManualResetEvent(false);
 
-
 		public ClientSideController(ServerSideCommunicator serverSideCommunicator,
 			DocumentContext documentContext,
 			IAuthorInfoEditor authorInfoEditor)
@@ -30,7 +30,7 @@ namespace DistributedDocs.Server.Controllers
 			_documentContext = documentContext;
 			_authorInfoEditor = authorInfoEditor;
 
-			_documentContext.OnCommit += SendCommitToClient;
+            _documentContext.OnCommit += SendCommitToClient;
 		}
 
 
@@ -65,24 +65,21 @@ namespace DistributedDocs.Server.Controllers
 			);
 		}
 
-		[Route("commit")]
-		[HttpPost]
+		[HttpPost("commit")]
 		public async Task<Response<EmptyResponseBody>> AddCommit([FromBody] ClientCommit clientCommit)
 		{
 			await _documentContext.EditDocument(clientCommit.DocumentId, clientCommit);
 			return new Response<EmptyResponseBody>();
 		}
-
-		[Route("user")]
-		[HttpPost]
+		
+		[HttpPost("user")]
 		public Response<EmptyResponseBody> ChangeName([FromBody] ChangeNameRequest changeNameRequest)
 		{
 			_authorInfoEditor.Name = changeNameRequest.NewName;
 			return new Response<EmptyResponseBody>();
 		}
 
-		[Route("connect")]
-		[HttpPost]
+		[HttpPost("connect")]
 		public async Task<Response<EmptyResponseBody>> ConnectToDocument([FromBody] DocumentConnectRequest connectRequest)
 		{
 			if (_documentContext.DocumentExists(connectRequest.DocumentId))
@@ -94,14 +91,12 @@ namespace DistributedDocs.Server.Controllers
 			await _serverSideCommunicator
 				.ConnectToDocument(connectRequest.DocumentId, _authorInfoEditor.Guid);
 
-
-			_documentContext.CreateNew(_documentContext.GetDocumentName(connectRequest.DocumentId), null);
+            _documentContext.CreateNew(_documentContext.GetDocumentName(connectRequest.DocumentId), null);
 
 			return new Response<EmptyResponseBody>();
 		}
 
-		[Route("bind/commits")]
-		[HttpGet]
+		[HttpGet("bind/commits")]
 		public async Task<Response<IReadOnlyCollection<ClientCommit>>> BindCommits()
 		{
 			var commits = await GetNewCommits();
@@ -111,21 +106,19 @@ namespace DistributedDocs.Server.Controllers
 			};
 		}
 
-		[Route("documents")]
-		[HttpGet]
+		[HttpGet("documents")]
 		public Response<IReadOnlyCollection<DocumentInfo>> GetDocuments()
-		{
-			var documentInfos = _documentContext.GetAllDocuments();
-			return new Response<IReadOnlyCollection<DocumentInfo>>
-			{
-				ErrorCode = 0,
-				ErrorString = string.Empty,
-				ResponseBody = documentInfos,
-			};
-		}
+        {
+            var documentInfos = _documentContext.GetAllDocuments();
+            return new Response<IReadOnlyCollection<DocumentInfo>>
+            {
+                ErrorCode = 0,
+                ErrorString = string.Empty,
+                ResponseBody = documentInfos,
+		    };
+        }
 
-		[Route("document")]
-		[HttpPost]
+		[HttpPost("document")]
 		public Response<DocumentCreateResponse> CreateDocument(
 			[FromBody] DocumentCreateRequest documentCreateRequest)
 		{

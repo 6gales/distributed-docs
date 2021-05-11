@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DistributedDocs.Server.Controllers
 {
-	[Route("/server")]
-	internal sealed class ServerSideController : ControllerBase
+    [ApiController]
+    [Route("server")]
+	public sealed class ServerSideController : ControllerBase
 	{
 		private readonly DocumentContext _documentContext;
 		private readonly IUserStorage _userStorage;

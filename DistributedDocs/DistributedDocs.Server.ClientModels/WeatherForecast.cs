@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DistributedDocs.DocumentChanges
+namespace DistributedDocs.Server.ClientModels
 {
     public sealed class WeatherForecast
     {

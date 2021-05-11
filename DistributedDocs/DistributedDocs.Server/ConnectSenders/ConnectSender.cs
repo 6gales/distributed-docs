@@ -53,8 +53,6 @@ namespace DistributedDocs.Server.ConnectSenders
 			return message.Serialize();
 		}
 
-		//private 
-
 		private void Send(object? state)
 		{
 			try

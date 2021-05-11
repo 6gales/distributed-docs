@@ -3,12 +3,12 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DistributedDocs.DocumentChanges;
+using DistributedDocs.Server.ClientModels;
 
 namespace DistributedDocs.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("weather")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries =
@@ -23,7 +23,7 @@ namespace DistributedDocs.Server.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet("get")]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
