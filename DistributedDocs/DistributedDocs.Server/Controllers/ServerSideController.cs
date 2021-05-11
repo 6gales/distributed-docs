@@ -22,6 +22,9 @@ namespace DistributedDocs.Server.Controllers
 			_userStorage = userStorage;
 		}
 
+		/// <summary>
+		/// Add commit to server side history
+		/// </summary>
 		[Route("commit")]
 		[HttpPost]
 		public Response<EmptyResponseBody> AddCommit([FromBody] ServerCommit serverCommit)
@@ -42,6 +45,9 @@ namespace DistributedDocs.Server.Controllers
 			return new Response<EmptyResponseBody>();
 		}
 
+		/// <summary>
+		/// Get history
+		/// </summary>
 		[Route("history")]
 		[HttpGet]
 		public Response<IReadOnlyCollection<ServerCommit>> GetHistory([FromQuery] Guid documentId)
@@ -67,6 +73,9 @@ namespace DistributedDocs.Server.Controllers
 
 		}
 
+		/// <summary>
+		/// User connect request register self in list of users and gets list of document's users
+		/// </summary>
 		[Route("connect")]
 		[HttpPost]
 		public Response<IReadOnlyCollection<IUser>> ConnectUser([FromBody] UserConnectRequest userConnectRequest)
@@ -92,6 +101,9 @@ namespace DistributedDocs.Server.Controllers
 			return GetUsers(userConnectRequest.DocumentId);
 		}
 
+		/// <summary>
+		/// User connect request gets list of document's users
+		/// </summary>
 		[Route("users")]
 		[HttpGet]
 		public Response<IReadOnlyCollection<IUser>> GetUsers([FromQuery]Guid documentId)

@@ -30,7 +30,8 @@ namespace DistributedDocs.Server.ConnectReceivers
 			_documentContext = documentContext;
 			_userStorage = userStorage;
 			_logger = logger;
-			_udpReceiver = new UdpClient(Port);
+			_udpReceiver = new UdpClient(Port) { MulticastLoopback = false };
+
 			_udpReceiver.JoinMulticastGroup(_group);
 
 			_thread = new Thread(ReceiveConnects);

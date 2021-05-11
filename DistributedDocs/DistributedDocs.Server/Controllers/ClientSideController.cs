@@ -65,13 +65,19 @@ namespace DistributedDocs.Server.Controllers
 			);
 		}
 
+		/// <summary>
+		/// Push new ClientCommit server history
+		/// </summary>
 		[HttpPost("commit")]
 		public async Task<Response<EmptyResponseBody>> AddCommit([FromBody] ClientCommit clientCommit)
 		{
 			await _documentContext.EditDocument(clientCommit.DocumentId, clientCommit);
 			return new Response<EmptyResponseBody>();
 		}
-		
+
+		/// <summary>
+		/// Change User name that will be used in history commit like author 
+		/// </summary>
 		[HttpPost("user")]
 		public Response<EmptyResponseBody> ChangeName([FromBody] ChangeNameRequest changeNameRequest)
 		{
@@ -79,6 +85,9 @@ namespace DistributedDocs.Server.Controllers
 			return new Response<EmptyResponseBody>();
 		}
 
+		/// <summary>
+		/// Uses for connect to document with specified id
+		/// </summary>
 		[HttpPost("connect")]
 		public async Task<Response<EmptyResponseBody>> ConnectToDocument([FromBody] DocumentConnectRequest connectRequest)
 		{
@@ -103,6 +112,9 @@ namespace DistributedDocs.Server.Controllers
 			return new Response<EmptyResponseBody>();
 		}
 
+		/// <summary>
+		/// Long-polling request for taking newest commits from server
+		/// </summary>
 		[HttpGet("bind/commits")]
 		public async Task<Response<IReadOnlyCollection<ClientCommit>>> BindCommits()
 		{
@@ -113,6 +125,9 @@ namespace DistributedDocs.Server.Controllers
 			};
 		}
 
+		/// <summary>
+		/// Get list of documents with their names and ids
+		/// </summary>
 		[HttpGet("documents")]
 		public Response<IReadOnlyCollection<DocumentInfo>> GetDocuments()
         {
@@ -125,6 +140,9 @@ namespace DistributedDocs.Server.Controllers
 		    };
         }
 
+		/// <summary>
+		/// Create document with name and path return document id
+		/// </summary>
 		[HttpPost("document")]
 		public Response<DocumentCreateResponse> CreateDocument(
 			[FromBody] DocumentCreateRequest documentCreateRequest)

@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 using DistributedDocs.DocumentChanges;
 using DistributedDocs.FileSystem;
@@ -55,9 +58,13 @@ namespace DistributedDocs.Server
 				c.SwaggerDoc("v1", 
 					new OpenApiInfo
 					{
-						Title = "Payment Card Info API", 
+						Title = "Distributed docs API", 
 						Version = "v1"
 					});
+
+				var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+				c.IncludeXmlComments(xmlPath);
             });
         }
 
