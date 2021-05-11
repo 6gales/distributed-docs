@@ -28,7 +28,7 @@
     private async Task OnLinkClick(ChangeEventArgs args)
     {
         var newValue = args.Value.ToString();
-        await Http.PostAsJsonAsync("/client/connect", new DocumentConnectRequest
+        await Http.PostAsJsonAsync("client/connect", new DocumentConnectRequest
         {
             DocumentId = _documents.First(n => n.DocumentName == newValue).DocumentId
         });

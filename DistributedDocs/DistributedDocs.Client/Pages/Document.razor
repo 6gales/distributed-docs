@@ -5,7 +5,7 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 
-<h3 title="@Name" ></h3>
+<h3> @Name </h3>
 
 <textArea
     value="@TextAreaValue" rows="17" cols="110" @oninput="@OnTextChanged">
@@ -46,14 +46,21 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var response = await Http.GetFromJsonAsync<Response<IReadOnlyCollection<ClientCommit>>>("client/bind/commit");
-        var commits = response.ResponseBody ?? Array.Empty<ClientCommit>();
-        foreach (var clientCommit in commits)
+        try
         {
-            TextAreaValue = new StringBuilder(TextAreaValue ?? string.Empty)
-                .Remove(clientCommit.BeginIndex, clientCommit.EndIndex - clientCommit.BeginIndex)
-                .Insert(clientCommit.BeginIndex, clientCommit.String)
-                .ToString();
+            var response = await Http.GetFromJsonAsync<Response<IReadOnlyCollection<ClientCommit>>>("client/bind/commit");
+            var commits = response.ResponseBody ?? Array.Empty<ClientCommit>();
+            foreach (var clientCommit in commits)
+            {
+                TextAreaValue = new StringBuilder(TextAreaValue ?? string.Empty)
+                    .Remove(clientCommit.BeginIndex, clientCommit.EndIndex - clientCommit.BeginIndex)
+                    .Insert(clientCommit.BeginIndex, clientCommit.String)
+                    .ToString();
+            }
+        }
+        catch
+        {
+            // ignored
         }
     }
 
