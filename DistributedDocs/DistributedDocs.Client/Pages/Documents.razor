@@ -23,12 +23,11 @@
 
     private async Task OnButton(DocumentInfo info)
     {
-       
         await Http.PostAsJsonAsync("client/connect", new DocumentConnectRequest
         {
             DocumentId = _documents.First(n => n.DocumentName == info.DocumentName).DocumentId
         });
-          NavigationManager.NavigateTo($"/documents/{info.DocumentId}");
+        NavigationManager.NavigateTo($"/documents/{info.DocumentId}");
     }
 
 }

@@ -8,7 +8,7 @@
 
 <p>
     <label>
-        Normal Blazor binding:
+        File will be created as:
         <input @bind="FileName"/>
     </label>
 </p>
@@ -20,11 +20,12 @@
     <input value="@FilePath" placeholder="Enter file path" @oninput="@OnPathChanged"/>
 </div>
 
-<button @onclick="OnButton">Create</button>
+<button @onclick="OnButton" disabled="@IsDisabled">Create</button>
 
 @code {
     private string FileName { get; set; } = string.Empty;
     private string FilePath { get; set; } = string.Empty;
+    private bool IsDisabled => string.IsNullOrWhiteSpace(FileName);
 
     private void OnNameChanged(ChangeEventArgs args)
     {
@@ -40,7 +41,7 @@
 
     private async Task OnButton()
     {
-        var response = await Http.PostAsJsonAsync("/client/document",
+        var response = await Http.PostAsJsonAsync("client/document",
             new DocumentCreateRequest
             {
                 DocumentName = FileName,
