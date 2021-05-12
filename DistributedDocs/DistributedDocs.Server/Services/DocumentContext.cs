@@ -10,7 +10,7 @@ using DistributedDocs.Server.Extensions;
 
 namespace DistributedDocs.Server.Services
 {
-	internal sealed class DocumentContext
+	public sealed class DocumentContext
 	{
 		private readonly Dictionary<Guid, IConcurrentVersionHistory<ITextDiff>> _documents =
 			new Dictionary<Guid, IConcurrentVersionHistory<ITextDiff>>();
@@ -18,9 +18,6 @@ namespace DistributedDocs.Server.Services
 		private readonly Dictionary<Guid, DocumentInfo> _remoteDocuments = 
 			new Dictionary<Guid, DocumentInfo>();
 
-
-
-		//private readonly IUserStorage _userStorage;
 		private readonly ServerSideCommunicator _serverSideCommunicator;
 		private readonly IVersionHistoryProvider<ITextDiff> _versionHistoryProvider;
 		private readonly IAuthorInfoEditor _authorInfoEditor;
@@ -96,7 +93,7 @@ namespace DistributedDocs.Server.Services
 		{
 			if (!_documents.TryGetValue(documentId, out var version))
 			{
-				return new List<ServerCommit>();
+				throw new ArgumentException($"No such document with id : {documentId}");
 			}
 
 			return version.History
@@ -157,6 +154,22 @@ namespace DistributedDocs.Server.Services
 		public void AddRemoteDocument(Guid documentId, DocumentInfo documentInfo)
 		{
 			_remoteDocuments.Add(documentId, documentInfo);
+		}
+
+		public void LoadHistory(Guid documentId)
+		{
+			if (!_documents.TryGetValue(documentId, out var history))
+			{
+				return;
+			}
+
+			var commits = history.History
+				.Select(c => c.FromHistoryCommit(documentId));
+
+			foreach (var commit in commits)
+			{
+				OnCommit?.Invoke(commit);
+			}
 		}
 	}
 }

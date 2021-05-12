@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DistributedDocs.Server.Users
 {
-	internal sealed class UserStorage : IUserStorage
+	public sealed class UserStorage : IUserStorage
 	{
 		private readonly Dictionary<Guid, Dictionary<Guid, IUser>> _documentUsers =
 			new Dictionary<Guid, Dictionary<Guid, IUser>>();

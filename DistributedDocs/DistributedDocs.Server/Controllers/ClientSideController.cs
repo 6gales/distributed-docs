@@ -10,8 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DistributedDocs.Server.Controllers
 {
-	[Route("/client")]
-	internal sealed class ClientSideController : ControllerBase
+    [ApiController]
+	[Route("client")]
+    public sealed class ClientSideController : ControllerBase
 	{
 		private readonly ServerSideCommunicator _serverSideCommunicator;
 		private readonly DocumentContext _documentContext;
@@ -21,7 +22,6 @@ namespace DistributedDocs.Server.Controllers
 		private readonly object _commitsSyncRoot = new object();
 		private readonly ManualResetEvent _event = new ManualResetEvent(false);
 
-
 		public ClientSideController(ServerSideCommunicator serverSideCommunicator,
 			DocumentContext documentContext,
 			IAuthorInfoEditor authorInfoEditor)
@@ -30,7 +30,7 @@ namespace DistributedDocs.Server.Controllers
 			_documentContext = documentContext;
 			_authorInfoEditor = authorInfoEditor;
 
-			_documentContext.OnCommit += SendCommitToClient;
+            _documentContext.OnCommit += SendCommitToClient;
 		}
 
 
@@ -65,43 +65,57 @@ namespace DistributedDocs.Server.Controllers
 			);
 		}
 
-		[Route("commit")]
-		[HttpPost]
+		/// <summary>
+		/// Push new ClientCommit server history
+		/// </summary>
+		[HttpPost("commit")]
 		public async Task<Response<EmptyResponseBody>> AddCommit([FromBody] ClientCommit clientCommit)
 		{
 			await _documentContext.EditDocument(clientCommit.DocumentId, clientCommit);
 			return new Response<EmptyResponseBody>();
 		}
 
-		[Route("user")]
-		[HttpPost]
+		/// <summary>
+		/// Change User name that will be used in history commit like author 
+		/// </summary>
+		[HttpPost("user")]
 		public Response<EmptyResponseBody> ChangeName([FromBody] ChangeNameRequest changeNameRequest)
 		{
 			_authorInfoEditor.Name = changeNameRequest.NewName;
 			return new Response<EmptyResponseBody>();
 		}
 
-		[Route("connect")]
-		[HttpPost]
+		/// <summary>
+		/// Uses for connect to document with specified id
+		/// </summary>
+		[HttpPost("connect")]
 		public async Task<Response<EmptyResponseBody>> ConnectToDocument([FromBody] DocumentConnectRequest connectRequest)
 		{
 			if (_documentContext.DocumentExists(connectRequest.DocumentId))
 			{
+				_documentContext.LoadHistory(connectRequest.DocumentId);
 				return new Response<EmptyResponseBody>();
+
 			}
 
 			// TODO: check errors
 			await _serverSideCommunicator
 				.ConnectToDocument(connectRequest.DocumentId, _authorInfoEditor.Guid);
 
+			var history = await _serverSideCommunicator.GetHistory(connectRequest.DocumentId);
+			_documentContext.CreateNew(connectRequest.DocumentId, 
+				_documentContext.GetDocumentName(connectRequest.DocumentId), 
+				history);
 
-			_documentContext.CreateNew(_documentContext.GetDocumentName(connectRequest.DocumentId), null);
+			_documentContext.LoadHistory(connectRequest.DocumentId);
 
 			return new Response<EmptyResponseBody>();
 		}
 
-		[Route("bind/commits")]
-		[HttpGet]
+		/// <summary>
+		/// Long-polling request for taking newest commits from server
+		/// </summary>
+		[HttpGet("bind/commits")]
 		public async Task<Response<IReadOnlyCollection<ClientCommit>>> BindCommits()
 		{
 			var commits = await GetNewCommits();
@@ -111,21 +125,25 @@ namespace DistributedDocs.Server.Controllers
 			};
 		}
 
-		[Route("documents")]
-		[HttpGet]
+		/// <summary>
+		/// Get list of documents with their names and ids
+		/// </summary>
+		[HttpGet("documents")]
 		public Response<IReadOnlyCollection<DocumentInfo>> GetDocuments()
-		{
-			var documentInfos = _documentContext.GetAllDocuments();
-			return new Response<IReadOnlyCollection<DocumentInfo>>
-			{
-				ErrorCode = 0,
-				ErrorString = string.Empty,
-				ResponseBody = documentInfos,
-			};
-		}
+        {
+            var documentInfos = _documentContext.GetAllDocuments();
+            return new Response<IReadOnlyCollection<DocumentInfo>>
+            {
+                ErrorCode = 0,
+                ErrorString = string.Empty,
+                ResponseBody = documentInfos,
+		    };
+        }
 
-		[Route("document")]
-		[HttpPost]
+		/// <summary>
+		/// Create document with name and path return document id
+		/// </summary>
+		[HttpPost("document")]
 		public Response<DocumentCreateResponse> CreateDocument(
 			[FromBody] DocumentCreateRequest documentCreateRequest)
 		{
@@ -137,7 +155,7 @@ namespace DistributedDocs.Server.Controllers
 				ErrorString = string.Empty,
 				ResponseBody = new DocumentCreateResponse
 				{
-					DocumentGuid = history.Guid,
+					DocumentId = history.Guid,
 				},
 			};
 		}

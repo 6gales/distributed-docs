@@ -1,7 +1,22 @@
 ﻿@page "/"
+@using DistributedDocs.Server.ClientModels
+@inject HttpClient Http
 
-<h1>Hello, world!</h1>
+<h1>Welcome to distributed documents</h1>
 
-Welcome to your new app.
+<label>Enter your user name</label>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<div>
+    <input value="@UserName" @oninput="@OnNameChanged"/>
+</div>
+
+@code {
+    private string UserName { get; set; } = string.Empty;
+
+    private async Task OnNameChanged(ChangeEventArgs args)
+    {
+        var newValue = args.Value.ToString();
+        UserName = newValue;
+        await Http.PostAsJsonAsync("/client/user", new ChangeNameRequest {NewName = UserName});
+    }
+}

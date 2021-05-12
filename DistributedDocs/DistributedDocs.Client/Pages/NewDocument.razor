@@ -1,0 +1,59 @@
+@page "/new"
+@using DistributedDocs.Server.ClientModels
+@using Newtonsoft.Json
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+
+<h3>Create new document</h3>
+
+<p>
+    <label>
+        File will be created as:
+        <input @bind="FileName"/>
+    </label>
+</p>
+
+<div>
+    <input value="@FileName" placeholder="Enter file name" @oninput="@OnNameChanged"/>
+</div>
+<div>
+    <input value="@FilePath" placeholder="Enter file path" @oninput="@OnPathChanged"/>
+</div>
+
+<button @onclick="OnButton" disabled="@IsDisabled">Create</button>
+
+@code {
+    private string FileName { get; set; } = string.Empty;
+    private string FilePath { get; set; } = string.Empty;
+    private bool IsDisabled => string.IsNullOrWhiteSpace(FileName);
+
+    private void OnNameChanged(ChangeEventArgs args)
+    {
+        var newValue = args.Value.ToString();
+        FileName = newValue;
+    }
+
+    private void OnPathChanged(ChangeEventArgs args)
+    {
+        var newValue = args.Value.ToString();
+        FilePath = newValue;
+    }
+
+    private async Task OnButton()
+    {
+        var response = await Http.PostAsJsonAsync("client/document",
+            new DocumentCreateRequest
+            {
+                DocumentName = FileName,
+                Path = FilePath
+            });
+
+        var responseStr = await response.Content.ReadAsStringAsync();
+
+        var data = JsonConvert.DeserializeObject<Response<DocumentCreateResponse>>(responseStr);
+        var documentId = data.ResponseBody.DocumentId;
+        DocumentManager.AddDocument(new DocumentInfo {DocumentId = documentId, DocumentName = FileName});
+        NavigationManager.NavigateTo($"/documents/{documentId}");
+    }
+
+}

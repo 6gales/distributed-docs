@@ -1,0 +1,66 @@
+@page "/documents/{Id}"
+@using DistributedDocs.Server.ClientModels
+@using System.Text
+@using DistributedDocs.DocumentChanges
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+
+<h3> @Name </h3>
+
+<textArea
+    value="@TextAreaValue" rows="17" cols="110" @oninput="@OnTextChanged">
+</textArea>
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    private DocumentInfo _document;
+    private string Name { get; set; } = string.Empty;
+
+    private string? TextAreaValue { get; set; } = string.Empty;
+
+    protected override Task OnInitializedAsync()
+    {
+        _document = DocumentManager.GetDocument(Guid.Parse(Id)) ?? throw new ArgumentNullException(nameof(_document), $"Document with id={Id} is null");
+        Name = _document.DocumentName;
+        return Task.CompletedTask;
+    }
+
+    private async Task OnTextChanged(ChangeEventArgs args)
+    {
+        var newValue = args.Value.ToString();
+        var commits = TextDiff.BetweenTexts(TextAreaValue ?? string.Empty, newValue);
+        TextAreaValue = newValue;
+
+        foreach (var diff in commits)
+        {
+            var clientCommit = new ClientCommit
+            {
+                BeginIndex = diff.StartIndex, EndIndex = diff.EndIndex, String = diff.Text, DocumentId = _document.DocumentId
+            };
+            await Http.PostAsJsonAsync("client/commit", clientCommit);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            var response = await Http.GetFromJsonAsync<Response<IReadOnlyCollection<ClientCommit>>>("client/bind/commits");
+            var commits = response.ResponseBody ?? Array.Empty<ClientCommit>();
+            foreach (var clientCommit in commits)
+            {
+                TextAreaValue = new StringBuilder(TextAreaValue ?? string.Empty)
+                    .Remove(clientCommit.BeginIndex, clientCommit.EndIndex - clientCommit.BeginIndex)
+                    .Insert(clientCommit.BeginIndex, clientCommit.String)
+                    .ToString();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+}

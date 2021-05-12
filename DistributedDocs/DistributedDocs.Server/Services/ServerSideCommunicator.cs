@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace DistributedDocs.Server.Services
 {
-	internal sealed class ServerSideCommunicator
+	public sealed class ServerSideCommunicator
 	{
 		private readonly HttpClient _httpClient = new HttpClient();
 		private readonly IUserStorage _userStorage;
@@ -104,6 +104,9 @@ namespace DistributedDocs.Server.Services
 				{
 					UserGuid = _authorInfoEditor.Guid,
 					UserName = _authorInfoEditor.Name ?? string.Empty,
+					Host = "",
+					// TODO: edit port
+					Port = 5000,
 				},
 			};
 
